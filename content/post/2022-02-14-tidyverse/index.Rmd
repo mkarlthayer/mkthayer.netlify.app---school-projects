@@ -32,4 +32,11 @@ select(hotels, lead_time) #one var
 ```{r}
 select(hotels, hotel, lead_time) #two var
 ```
+## Pipes
+```{r}
+hotels %>%
+  select(hotel, lead_time) %>%
+  arrange(desc(lead_time))
+```
+
 
