@@ -1,0 +1,103 @@
+---
+title: Multiple Data Frames - TidyVerse
+author: R package build
+date: '2022-02-15'
+slug: multiple-data-frames-tidyverse
+categories: []
+tags: []
+---
+#Call libraries
+```{r}
+library(tidyverse)
+```
+## Get data
+```{r}
+professions <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/professions.csv')
+dates <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/dates.csv')
+works <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/works.csv')
+enrollment <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/enrolment.csv')
+survey <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/survey.csv')
+prices <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/prices.csv')
+purchases <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/purchases.csv')
+```
+## Set up
+```{r}
+x <- tibble(
+  id = c(1:3),
+  value_x = c("x1","x2","x3")
+  )
+y <- tibble(
+  id = c(1,2,4),
+  value_y = c("y1","y2","y3")
+)
+```
+## left_join()
+```{r}
+left_join(x,y)
+professions %>%
+  left_join(dates)
+```
+## right_join()
+```{r}
+right_join(x,y)
+professions %>%
+  right_join(dates)
+```
+## full_join()
+```{r}
+full_join(x, y)
+dates %>%
+  full_join(works)
+```
+## inner_join()
+```{r}
+inner_join(x,y)
+dates %>%
+  inner_join(works)
+```
+## semi_join()
+```{r}
+semi_join(x,y)
+dates %>%
+  semi_join(works)
+```
+## anti_join()
+{
+anti_join(x,y)
+dates %>%
+  anti_join(works)
+}
+#Join all dfs
+```{r}
+professions %>%
+  left_join(dates) %>%
+  left_join(works)
+```
+#Student Records
+```{r}
+#In class
+enrollment %>%
+  left_join(survey, by="id")
+#Survey missing
+enrollment %>%
+  anti_join(survey, by="id")
+#Dropped
+survey %>%
+  anti_join(enrollment, by="id")
+```
+#Grocery Sales
+```{r}
+# Total revenue
+purchases %>% 
+  left_join(prices) %>%
+  summarise(total_revenue = sum(price))
+# Revenue per customer
+purchases %>% 
+  left_join(prices) %>%
+  group_by(customer_id) %>%
+  summarise(total_revenue = sum(price))
+```
+
+
+
+
