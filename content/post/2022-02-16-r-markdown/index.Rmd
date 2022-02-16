@@ -284,9 +284,7 @@ output:
 
 # Figures
 
-## Embed Images
-image: ![](nyu.jpeg){width=50%}  
-#Added {width=50%} to make it half the page, but don't have to use this
+
 
 ## Creating Images
 ```{r,eval=FALSE}
