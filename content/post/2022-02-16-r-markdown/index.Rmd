@@ -18,7 +18,7 @@ output:
 library(datasets)
 data(iris)
 #load packages
-pkgs <- c( "psych", "tidyr", "tidyverse", "psych", "dplyr", "ggplot2")
+pkgs <- c("rstatix","emmeans","lm.beta","car", "Hmisc","skimr","janitor","psych","tidyr","tidyverse","psych","dplyr","ggplot2")
 lapply(pkgs, library, character.only = TRUE)
 
 ```
@@ -195,7 +195,7 @@ Default message=TRUE
 
 ```{r,message=FALSE,results=FALSE}
 #load packages
-pkgs <- c("psych","tidyr","tidyverse","psych","dplyr","ggplot2")
+pkgs <- c("rstatix","emmeans","lm.beta","car", "Hmisc","skimr","janitor","psych","tidyr","tidyverse","psych","dplyr","ggplot2")
 lapply(pkgs, library, character.only = TRUE)
 ```
 
