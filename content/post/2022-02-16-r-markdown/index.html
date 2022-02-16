@@ -1,12 +1,12 @@
 ---
 title: R Markdown
 author: R package build
-date: "2022-02-16"
+date: '2022-02-16'
 slug: r-markdown
 categories: []
 tags: []
 output: 
-  html_document:
+  html_notebook:
     theme: yeti #specifies the theme (structure/font)
     highlight: zenburn #creates dark background for code
     df_print: paged
@@ -52,8 +52,7 @@ End a line with two spaces to start new paragraph<br />
 <em>italics</em> and <em>italics</em><br />
 <strong>bold</strong> and <strong>bold</strong><br />
 superscript<sup>2</sup><br />
-–strikethrough–<br />
-<a href="www.rstudio.com">link</a></p>
+<del>strikethrough</del> <a href="www.rstudio.com">link</a></p>
 </div>
 <div id="headers-level-2" class="section level2">
 <h2>Headers (level 2)</h2>
@@ -88,16 +87,16 @@ inline equation: <span class="math inline">\(A = \pi*r^(2)\)</span></p>
 <p>block quote</p>
 </blockquote>
 <ul>
-<li>unordered list</li>
-<li>item 2
+<li><p>unordered list</p></li>
+<li><p>item 2</p>
 <ul>
 <li>sub-item 1 (one tab)</li>
 <li>sub-item 2 (one tab)</li>
 </ul></li>
 </ul>
 <ol style="list-style-type: decimal">
-<li>ordered list</li>
-<li>item 2
+<li><p>ordered list</p></li>
+<li><p>item 2</p>
 <ul>
 <li>sub-item 1 (two tabs)</li>
 <li>sub-item 2 (two tabs)</li>
@@ -245,9 +244,9 @@ y &lt;- x * 2
 <h2>Basic TOC</h2>
 <pre class="r"><code>title: &quot;R markdown&quot;
 author: &quot;R package studio&quot;
-date: &quot;2/16/2022&quot;
+date: &#39;2/16/2022&#39;
 output: 
-  html_document
+  html_document:
   toc: true
   toc_depth: 2 #This includes up to two headers</code></pre>
 </div>
@@ -255,9 +254,9 @@ output:
 <h2>Floating TOC</h2>
 <pre class="r"><code>title: &quot;R markdown&quot;
 author: &quot;R package studio&quot;
-date: &quot;2/16/2021&quot;
+date: &#39;2/16/2021&#39;
 output: 
-  html_document
+  html_document:
   toc: true
   toc_float: true
   collapsed: true #If TOC appears with only top-level headers
@@ -309,7 +308,7 @@ library(rmdformats)</code></pre>
 <pre class="r"><code>#Specify this in the beginning of the doc
 Highlight: Specifes syntax highlighting style
 
-Specify: default, tango, pygments, kate, monochrome, espresso, zenburn, haddock, breezedark, and textmate (use null for no highlight)</code></pre>
+Options: default, tango, pygments, kate, monochrome, espresso, zenburn, haddock, breezedark, and textmate (use null for no highlight)</code></pre>
 </div>
 <div id="smart" class="section level2">
 <h2>Smart</h2>
@@ -330,6 +329,11 @@ output:
 </div>
 <div id="figures" class="section level1">
 <h1>Figures</h1>
+<div id="embed-images" class="section level2">
+<h2>Embed Images</h2>
+<p><img src="image/nyu.png" /><br />
+#{width=50%} makes it half the page, not necessary</p>
+</div>
 <div id="creating-images" class="section level2">
 <h2>Creating Images</h2>
 <pre class="r"><code>#Specify this in the beginning of the doc
