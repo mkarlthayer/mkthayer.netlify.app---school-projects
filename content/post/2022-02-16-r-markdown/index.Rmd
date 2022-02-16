@@ -5,6 +5,13 @@ date: "`r Sys.Date()`"
 slug: r-markdown
 categories: []
 tags: []
+output: 
+  html_document:
+    theme: yeti #specifies the theme (structure/font)
+    highlight: zenburn #creates dark background for code
+    df_print: paged
+    toc: true
+    toc_float: true
 ---
 ```{r, warning=FALSE, message = FALSE, results=FALSE}
 library(datasets)
