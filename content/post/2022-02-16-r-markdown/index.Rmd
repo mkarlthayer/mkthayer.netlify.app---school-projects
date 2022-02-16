@@ -1,0 +1,46 @@
+---
+title: R Markdown
+author: R package build
+date: '2022-02-16'
+slug: r-markdown
+categories: []
+tags: []
+---
+```{r, warning=FALSE}
+library(datasets)
+data(iris)
+#load packages
+pkgs <- c( "psych", "tidyr", "tidyverse", "psych", "dplyr", "ggplot2")
+lapply(pkgs, library, character.only = TRUE)
+
+```
+# Intro
+
+## Code Chunks
+```{r}
+#Sum of 2 + 2
+2+2
+#Mean
+mean(iris$Sepal.Length)
+```
+```{r}
+unique(iris$Species)
+```
+## Inline Code
+Two plus two equals `r 2+2`
+Average Sepal Length is `r mean(iris$Sepal.Length)`
+The three levels of Species are `r unique(iris$Species)`
+
+# Basics
+
+## Text
+Plain text - hello
+End a line with two spaces to start new paragraph
+*italics* and _italics_
+**bold** and __bold__
+superscript^2^
+--strikethrough--
+[link](www.rstudio.com)
+
+## Headers (level 2)
+
