@@ -53,7 +53,8 @@ End a line with two spaces to start new paragraph\
 *italics* and *italics*\
 **bold** and **bold**\
 superscript^2^\
-~~strikethrough~~ [link](www.rstudio.com)
+~~strikethrough~~   
+[link](www.rstudio.com)
 
 ## Headers (level 2)
 
