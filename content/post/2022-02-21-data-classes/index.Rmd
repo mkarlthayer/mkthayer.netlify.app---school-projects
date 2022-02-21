@@ -1,0 +1,116 @@
+---
+title: Data Classes
+author: R Package Build
+date: '2022-02-21'
+slug: data-classes
+categories: []
+tags: []
+---
+
+# Call libraries
+```{r warning=FALSE}
+library(tidyverse)
+library(glue)
+library(lubridate)
+```
+# Get data
+```{r show_col_types = FALSE, message=FALSE}
+cat_lovers <- read_csv('https://raw.githubusercontent.com/thayerm/tidyverse/main/cat-lovers.csv')
+url <- 'https://raw.githubusercontent.com/thayerm/tidyverse/main/hotels.csv'
+hotels <- read_csv(url)
+```
+# Factors
+
+```{r}
+x <- factor(c("BS", "MS", "PhD", "MS"))
+x
+typeof(x) # character type
+class(x) # factor class
+```
+
+```{r}
+glimpse(x)
+as.numeric(x)
+```
+# Dates
+```{r}
+y <- as.Date("2020-01-01")
+y
+
+typeof(y) # double type
+
+class(y) # Date class
+
+as.integer(y)
+as.integer(y) / 365 # number of years from 1970 ("origin" year)
+```
+# Data frames
+```{r}
+df <- data.frame(x = 1:2, y = 3:4)
+df
+
+typeof(df) # list type
+class(df) # data frame class
+```
+# Lists
+```{r}
+l <- list(
+  x = 1:4,
+  y = c("hi", "hello", "jello"),
+  z = c(TRUE, FALSE)
+)
+l
+```
+# Extract vector from data frame
+```{r}
+df 
+df %>%
+  pull(y)
+```
+
+## Working with Factors
+```{r}
+glimpse(cat_lovers)
+
+ggplot(cat_lovers, mapping = aes(x = handedness)) +
+  geom_bar()
+# Change order by frequencies
+cat_lovers %>%
+  mutate(handedness = fct_infreq(handedness)) %>%
+  ggplot(mapping = aes(x = handedness)) +
+  geom_bar()
+```
+
+## More with dates {.tabset}
+```{r}
+hotels %>%
+  select(starts_with("arrival_"))
+# Use glue to construct dates and ymd to construct as date
+hotels %>%
+  mutate(
+    arrival_date =ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}")
+    )) %>% 
+  relocate(arrival_date)
+# Count Bookings per date
+hotels %>%
+  mutate(arrival_date = ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}"))) %>%
+  count(arrival_date)
+```
+# Visualize bookings per date
+```{r}
+hotels %>%
+  mutate(arrival_date = ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}"))) %>%
+  count(arrival_date) %>%
+  ggplot(aes(x = arrival_date, y = n, group = 1)) +
+  geom_line()
+```
+# Smooth Curve
+```{r}
+hotels %>%
+  mutate(arrival_date = ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}"))) %>% 
+  count(arrival_date) %>%
+  ggplot(aes(x = arrival_date, y = n, group = 1)) +
+  geom_smooth()
+```
+
+
