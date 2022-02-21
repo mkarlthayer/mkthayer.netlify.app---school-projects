@@ -61,7 +61,7 @@ c("Hello", "World!")
 c(c("hi", "hello"), c("bye", "jello"))
 ```
 ## Converting Between Data Types {.tabset}
-# With Intention
+### With Intention
 ```{r}
 x <- c(TRUE, FALSE)
 x
@@ -73,7 +73,7 @@ y
 
 typeof(y) # character
 ```
-# Without Intention
+### Without Intention
 ```{r}
 c(1, "Hello") # changes all values to character values
 c(FALSE, 3L) # changes all to integer values

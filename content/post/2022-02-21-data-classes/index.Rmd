@@ -81,7 +81,7 @@ cat_lovers %>%
   geom_bar()
 ```
 
-## More with dates {.tabset}
+# More with dates {.tabset}
 ```{r}
 hotels %>%
   select(starts_with("arrival_"))
@@ -96,7 +96,7 @@ hotels %>%
   mutate(arrival_date = ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}"))) %>%
   count(arrival_date)
 ```
-# Visualize bookings per date
+## Visualize bookings per date
 ```{r}
 hotels %>%
   mutate(arrival_date = ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}"))) %>%
@@ -104,7 +104,9 @@ hotels %>%
   ggplot(aes(x = arrival_date, y = n, group = 1)) +
   geom_line()
 ```
-# Smooth Curve
+
+
+## Smooth Curve
 ```{r}
 hotels %>%
   mutate(arrival_date = ymd(glue("{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}"))) %>% 

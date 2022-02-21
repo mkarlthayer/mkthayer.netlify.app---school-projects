@@ -125,8 +125,9 @@ cat_lovers %&gt;%
   geom_bar()</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
 </div>
-<div id="more-with-dates" class="section level2 tabset">
-<h2>More with dates</h2>
+</div>
+<div id="more-with-dates" class="section level1 tabset">
+<h1>More with dates</h1>
 <pre class="r"><code>hotels %&gt;%
   select(starts_with(&quot;arrival_&quot;))</code></pre>
 <pre><code>## # A tibble: 119,390 x 4
@@ -187,17 +188,17 @@ hotels %&gt;%
 ##  9 2015-07-09      80
 ## 10 2015-07-10      51
 ## # ... with 783 more rows</code></pre>
-</div>
-</div>
-<div id="visualize-bookings-per-date" class="section level1">
-<h1>Visualize bookings per date</h1>
+<div id="visualize-bookings-per-date" class="section level2">
+<h2>Visualize bookings per date</h2>
 <pre class="r"><code>hotels %&gt;%
   mutate(arrival_date = ymd(glue(&quot;{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}&quot;))) %&gt;%
   count(arrival_date) %&gt;%
   ggplot(aes(x = arrival_date, y = n, group = 1)) +
   geom_line()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" />
-# Smooth Curve</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="smooth-curve" class="section level2">
+<h2>Smooth Curve</h2>
 <pre class="r"><code>hotels %&gt;%
   mutate(arrival_date = ymd(glue(&quot;{arrival_date_year} {arrival_date_month} {arrival_date_day_of_month}&quot;))) %&gt;% 
   count(arrival_date) %&gt;%
@@ -205,4 +206,5 @@ hotels %&gt;%
   geom_smooth()</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
 </div>

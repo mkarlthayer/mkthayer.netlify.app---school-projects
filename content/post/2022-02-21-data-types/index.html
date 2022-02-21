@@ -96,12 +96,10 @@ c(1, 2, 3)</code></pre>
 <pre><code>## [1] &quot;Hello&quot;  &quot;World!&quot;</code></pre>
 <pre class="r"><code>c(c(&quot;hi&quot;, &quot;hello&quot;), c(&quot;bye&quot;, &quot;jello&quot;))</code></pre>
 <pre><code>## [1] &quot;hi&quot;    &quot;hello&quot; &quot;bye&quot;   &quot;jello&quot;</code></pre>
-<div id="converting-between-data-types" class="section level2">
+<div id="converting-between-data-types" class="section level2 tabset">
 <h2>Converting Between Data Types</h2>
-</div>
-</div>
-<div id="with-intention" class="section level1">
-<h1>With Intention</h1>
+<div id="with-intention" class="section level3">
+<h3>With Intention</h3>
 <pre class="r"><code>x &lt;- c(TRUE, FALSE)
 x</code></pre>
 <pre><code>## [1]  TRUE FALSE</code></pre>
@@ -113,8 +111,8 @@ y</code></pre>
 <pre class="r"><code>typeof(y) # character</code></pre>
 <pre><code>## [1] &quot;double&quot;</code></pre>
 </div>
-<div id="without-intention" class="section level1">
-<h1>Without Intention</h1>
+<div id="without-intention" class="section level3">
+<h3>Without Intention</h3>
 <pre class="r"><code>c(1, &quot;Hello&quot;) # changes all values to character values</code></pre>
 <pre><code>## [1] &quot;1&quot;     &quot;Hello&quot;</code></pre>
 <pre class="r"><code>c(FALSE, 3L) # changes all to integer values</code></pre>
@@ -123,6 +121,8 @@ y</code></pre>
 <pre><code>## [1] 1.2 3.0</code></pre>
 <pre class="r"><code>c(2L, &quot;two&quot;) # all character values</code></pre>
 <pre><code>## [1] &quot;2&quot;   &quot;two&quot;</code></pre>
+</div>
+</div>
 <div id="explicit-vs.-implicit-coercion" class="section level2">
 <h2>Explicit vs. implicit coercion</h2>
 <ul>
