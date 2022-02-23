@@ -143,7 +143,7 @@ fav_food <- read_excel("data/favourite-food.xlsx", na = c("N/A", "99999")) %>%
   )
 fav_food
 ```
-## Read and Write file
+## Read and Write file as CSV
 ```{r}
 write_csv(fav_food, file = "data/fav-food-clean.csv")
 fav_food_clean <- read_csv("data/fav-food-clean.csv")
