@@ -9,6 +9,7 @@ tags: []
 # Call libraries
 ```{r}
 library(readxl)
+library(tidyverse)
 ```
 # Get Data
 ```{r}
