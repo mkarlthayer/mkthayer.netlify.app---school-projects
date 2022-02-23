@@ -1,0 +1,360 @@
+---
+title: Importing Data
+author: R Package Build
+date: '2022-02-23'
+slug: importing-data
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="call-packages" class="section level1">
+<h1>Call packages</h1>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.3     v dplyr   1.0.7
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(readr)
+library(readxl)</code></pre>
+</div>
+<div id="import-data" class="section level1">
+<h1>Import Data</h1>
+<pre class="r"><code>url &lt;- &quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/nobel.csv&quot;
+nobel &lt;- read_csv(url)</code></pre>
+<pre><code>## Rows: 935 Columns: 26</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr  (21): firstname, surname, category, affiliation, city, country, gender,...
+## dbl   (3): id, year, share
+## date  (2): born_date, died_date</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="write-data" class="section level1">
+<h1>Write data</h1>
+<div id="data-file" class="section level2">
+<h2>Data File</h2>
+<pre class="r"><code>df &lt;- tribble(
+  ~x, ~y,
+  1,  &quot;a&quot;,
+  2,  &quot;b&quot;,
+  3,  &quot;c&quot;
+)
+write_csv(df, file = &quot;data/df.csv&quot;)
+# Read to inspect it
+read_csv(&quot;data/df.csv&quot;)</code></pre>
+<pre><code>## Rows: 3 Columns: 2</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (1): y
+## dbl (1): x</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##       x y    
+##   &lt;dbl&gt; &lt;chr&gt;
+## 1     1 a    
+## 2     2 b    
+## 3     3 c</code></pre>
+</div>
+</div>
+<div id="naming-variables" class="section level1">
+<h1>Naming variables</h1>
+<div id="data-w-bad-names" class="section level2">
+<h2>Data w Bad Names</h2>
+<pre class="r"><code>edibnb_badnames &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/edibnb-badnames.csv&quot;)</code></pre>
+<pre><code>## Rows: 13245 Columns: 10</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (2): neighbourhood, listing_url
+## dbl (8): ID, Price, accommodates, Number of bathrooms, Number of Bedrooms, n...</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>names(edibnb_badnames)</code></pre>
+<pre><code>##  [1] &quot;ID&quot;                   &quot;Price&quot;                &quot;neighbourhood&quot;       
+##  [4] &quot;accommodates&quot;         &quot;Number of bathrooms&quot;  &quot;Number of Bedrooms&quot;  
+##  [7] &quot;n beds&quot;               &quot;Review Scores Rating&quot; &quot;Number of reviews&quot;   
+## [10] &quot;listing_url&quot;</code></pre>
+</div>
+<div id="error-from-spaces-in-variable-name" class="section level2">
+<h2>Error from spaces in variable name</h2>
+<pre class="r"><code>#ggplot(edibnb_badnames, #aes(x = Number of #bathrooms, y = Price)) +
+#  geom_point()</code></pre>
+</div>
+<div id="to-fix-error---define-column-names" class="section level2">
+<h2>To fix error - Define column names</h2>
+<pre class="r"><code>edibnb_col_names &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/edibnb-badnames.csv&quot;,
+                             col_names = c(&quot;id&quot;, &quot;price&quot;, 
+                                           &quot;neighbourhood&quot;, &quot;accommodates&quot;,
+                                           &quot;bathroom&quot;, &quot;bedroom&quot;, 
+                                           &quot;bed&quot;, &quot;review_scores_rating&quot;, 
+                                           &quot;n_reviews&quot;, &quot;url&quot;))</code></pre>
+<pre><code>## Rows: 13246 Columns: 10</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (10): id, price, neighbourhood, accommodates, bathroom, bedroom, bed, re...</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>names(edibnb_col_names)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                   &quot;price&quot;                &quot;neighbourhood&quot;       
+##  [4] &quot;accommodates&quot;         &quot;bathroom&quot;             &quot;bedroom&quot;             
+##  [7] &quot;bed&quot;                  &quot;review_scores_rating&quot; &quot;n_reviews&quot;           
+## [10] &quot;url&quot;</code></pre>
+</div>
+<div id="format-text-to-snake-case" class="section level2">
+<h2>Format text to snake case</h2>
+<pre class="r"><code>edibnb_clean_names &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/edibnb-badnames.csv&quot;) %&gt;%
+  janitor::clean_names()</code></pre>
+<pre><code>## Rows: 13245 Columns: 10</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (2): neighbourhood, listing_url
+## dbl (8): ID, Price, accommodates, Number of bathrooms, Number of Bedrooms, n...</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>names(edibnb_clean_names)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                   &quot;price&quot;                &quot;neighbourhood&quot;       
+##  [4] &quot;accommodates&quot;         &quot;number_of_bathrooms&quot;  &quot;number_of_bedrooms&quot;  
+##  [7] &quot;n_beds&quot;               &quot;review_scores_rating&quot; &quot;number_of_reviews&quot;   
+## [10] &quot;listing_url&quot;</code></pre>
+</div>
+</div>
+<div id="variable-types" class="section level1">
+<h1>Variable types</h1>
+<pre class="r"><code>read_csv(&quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/df-na.csv&quot;)</code></pre>
+<pre><code>## Rows: 9 Columns: 3</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (3): x, y, z</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre><code>## # A tibble: 9 x 3
+##   x     y              z     
+##   &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt; 
+## 1 1     a              hi    
+## 2 &lt;NA&gt;  b              hello 
+## 3 3     Not applicable 9999  
+## 4 4     d              ola   
+## 5 5     e              hola  
+## 6 .     f              whatup
+## 7 7     g              wassup
+## 8 8     h              sup   
+## 9 9     i              &lt;NA&gt;</code></pre>
+<div id="explicit-nas" class="section level2">
+<h2>Explicit NAs</h2>
+<pre class="r"><code>read_csv(&quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/df-na.csv&quot;, 
+         na = c(&quot;&quot;, &quot;NA&quot;, &quot;.&quot;, &quot;9999&quot;, &quot;Not applicable&quot;))</code></pre>
+<pre><code>## Rows: 9 Columns: 3</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (2): y, z
+## dbl (1): x</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre><code>## # A tibble: 9 x 3
+##       x y     z     
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; 
+## 1     1 a     hi    
+## 2    NA b     hello 
+## 3     3 &lt;NA&gt;  &lt;NA&gt;  
+## 4     4 d     ola   
+## 5     5 e     hola  
+## 6    NA f     whatup
+## 7     7 g     wassup
+## 8     8 h     sup   
+## 9     9 i     &lt;NA&gt;</code></pre>
+<pre class="r"><code># Set problem elements to na directly</code></pre>
+</div>
+<div id="specify-column-types" class="section level2">
+<h2>Specify Column Types</h2>
+<pre class="r"><code>read_csv(&quot;https://raw.githubusercontent.com/thayerm/tidyverse/main/df-na.csv&quot;, col_types = list(col_double(), 
+                                            col_character(), 
+                                            col_character()))</code></pre>
+<pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
+<pre><code>## # A tibble: 9 x 3
+##       x y              z     
+##   &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt; 
+## 1     1 a              hi    
+## 2    NA b              hello 
+## 3     3 Not applicable 9999  
+## 4     4 d              ola   
+## 5     5 e              hola  
+## 6    NA f              whatup
+## 7     7 g              wassup
+## 8     8 h              sup   
+## 9     9 i              &lt;NA&gt;</code></pre>
+</div>
+<div id="different-column-types" class="section level2">
+<h2>Different Column Types</h2>
+<ul>
+<li>col_character() - character</li>
+<li>col_date() - date</li>
+<li>col_datetime() - POSIXct (date-time)</li>
+<li>col_double() - double (numeric)</li>
+<li>col_factor() - factor</li>
+<li>col_guess() - let readr guess (default)</li>
+<li>col_integer() - integer</li>
+<li>col_logical() - logical</li>
+<li>col_number() - numbers mixed with non-number characters</li>
+<li>col_numeric() - double or integer</li>
+<li>col_skip() - do not read</li>
+<li>col_time() - time</li>
+</ul>
+</div>
+</div>
+<div id="case-study" class="section level1">
+<h1>Case Study</h1>
+<div id="get-data" class="section level2">
+<h2>Get data</h2>
+<pre class="r"><code>fav_food &lt;- read_excel(&quot;data/favourite-food.xlsx&quot;)
+fav_food</code></pre>
+<pre><code>## # A tibble: 5 x 6
+##   `Student ID` `Full Name`      favourite.food     mealPlan          AGE   SES  
+##          &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;
+## 1            1 Sunil Huffmann   Strawberry yoghurt Lunch only        4     High 
+## 2            2 Barclay Lynn     French fries       Lunch only        5     Midd~
+## 3            3 Jayendra Lyne    N/A                Breakfast and lu~ 7     Low  
+## 4            4 Leon Rossini     Anchovies          Lunch only        99999 Midd~
+## 5            5 Chidiegwu Dunkel Pizza              Breakfast and lu~ five  High</code></pre>
+</div>
+<div id="variable-names" class="section level2">
+<h2>Variable Names</h2>
+<pre class="r"><code>fav_food &lt;- read_excel(&quot;data/favourite-food.xlsx&quot;) %&gt;%
+  janitor::clean_names()
+fav_food</code></pre>
+<pre><code>## # A tibble: 5 x 6
+##   student_id full_name        favourite_food     meal_plan           age   ses  
+##        &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt; &lt;chr&gt;
+## 1          1 Sunil Huffmann   Strawberry yoghurt Lunch only          4     High 
+## 2          2 Barclay Lynn     French fries       Lunch only          5     Midd~
+## 3          3 Jayendra Lyne    N/A                Breakfast and lunch 7     Low  
+## 4          4 Leon Rossini     Anchovies          Lunch only          99999 Midd~
+## 5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch five  High</code></pre>
+</div>
+</div>
+<div id="deal-with-nas" class="section level1">
+<h1>Deal With NAs</h1>
+<pre class="r"><code>fav_food &lt;- read_excel(&quot;data/favourite-food.xlsx&quot;,
+                       na = c(&quot;N/A&quot;, &quot;99999&quot;)) %&gt;%
+  janitor::clean_names()
+fav_food</code></pre>
+<pre><code>## # A tibble: 5 x 6
+##   student_id full_name        favourite_food     meal_plan           age   ses  
+##        &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt; &lt;chr&gt;
+## 1          1 Sunil Huffmann   Strawberry yoghurt Lunch only          4     High 
+## 2          2 Barclay Lynn     French fries       Lunch only          5     Midd~
+## 3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch 7     Low  
+## 4          4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt;  Midd~
+## 5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch five  High</code></pre>
+<div id="change-age-to-numeric" class="section level2">
+<h2>Change Age to Numeric</h2>
+<pre class="r"><code>fav_food &lt;- fav_food %&gt;%
+  mutate(
+    age = if_else(age == &quot;five&quot;, &quot;5&quot;, age),
+    age = as.numeric(age)
+    )
+glimpse(fav_food)</code></pre>
+<pre><code>## Rows: 5
+## Columns: 6
+## $ student_id     &lt;dbl&gt; 1, 2, 3, 4, 5
+## $ full_name      &lt;chr&gt; &quot;Sunil Huffmann&quot;, &quot;Barclay Lynn&quot;, &quot;Jayendra Lyne&quot;, &quot;Leo~
+## $ favourite_food &lt;chr&gt; &quot;Strawberry yoghurt&quot;, &quot;French fries&quot;, NA, &quot;Anchovies&quot;, ~
+## $ meal_plan      &lt;chr&gt; &quot;Lunch only&quot;, &quot;Lunch only&quot;, &quot;Breakfast and lunch&quot;, &quot;Lun~
+## $ age            &lt;dbl&gt; 4, 5, 7, NA, 5
+## $ ses            &lt;chr&gt; &quot;High&quot;, &quot;Middle&quot;, &quot;Low&quot;, &quot;Middle&quot;, &quot;High&quot;</code></pre>
+</div>
+<div id="sort-by-socio-economic-status" class="section level2">
+<h2>Sort by Socio-Economic Status</h2>
+<pre class="r"><code>fav_food %&gt;%
+  count(ses)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   ses        n
+##   &lt;chr&gt;  &lt;int&gt;
+## 1 High       2
+## 2 Low        1
+## 3 Middle     2</code></pre>
+</div>
+<div id="make-ses-a-factor" class="section level2">
+<h2>Make SES a factor</h2>
+<pre class="r"><code>fav_food &lt;- fav_food %&gt;%
+  mutate(ses = fct_relevel(ses, &quot;Low&quot;, &quot;Middle&quot;, &quot;High&quot;))
+fav_food %&gt;%
+  count(ses)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   ses        n
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 Low        1
+## 2 Middle     2
+## 3 High       2</code></pre>
+</div>
+<div id="putting-it-all-together-to-create-a-better-data-frame" class="section level2">
+<h2>Putting it all together to create a better data frame</h2>
+<pre class="r"><code>fav_food &lt;- read_excel(&quot;data/favourite-food.xlsx&quot;, na = c(&quot;N/A&quot;, &quot;99999&quot;)) %&gt;%
+  janitor::clean_names() %&gt;%
+  mutate(
+    age = if_else(age == &quot;five&quot;, &quot;5&quot;, age), 
+    age = as.numeric(age),
+    ses = fct_relevel(ses, &quot;Low&quot;, &quot;Middle&quot;, &quot;High&quot;)
+  )
+fav_food</code></pre>
+<pre><code>## # A tibble: 5 x 6
+##   student_id full_name        favourite_food     meal_plan             age ses  
+##        &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;dbl&gt; &lt;fct&gt;
+## 1          1 Sunil Huffmann   Strawberry yoghurt Lunch only              4 High 
+## 2          2 Barclay Lynn     French fries       Lunch only              5 Midd~
+## 3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch     7 Low  
+## 4          4 Leon Rossini     Anchovies          Lunch only             NA Midd~
+## 5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch     5 High</code></pre>
+</div>
+<div id="read-and-write-file" class="section level2">
+<h2>Read and Write file</h2>
+<pre class="r"><code>write_csv(fav_food, file = &quot;data/fav-food-clean.csv&quot;)
+fav_food_clean &lt;- read_csv(&quot;data/fav-food-clean.csv&quot;)</code></pre>
+<pre><code>## Rows: 5 Columns: 6</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (4): full_name, favourite_food, meal_plan, ses
+## dbl (2): student_id, age</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="note-ses-is-no-longer-a-factor" class="section level2">
+<h2>Note SES is no longer a factor</h2>
+<pre class="r"><code>fav_food_clean %&gt;%
+  count(ses)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   ses        n
+##   &lt;chr&gt;  &lt;int&gt;
+## 1 High       2
+## 2 Low        1
+## 3 Middle     2</code></pre>
+</div>
+<div id="use-write_rds-and-read_rds-to-preserve-certain-variable-type-info" class="section level2">
+<h2>Use write_rds and read_rds to preserve certain variable type info</h2>
+<pre class="r"><code>write_rds(fav_food, file = &quot;data/fav-food-clean.rds&quot;)
+fav_food_clean &lt;- read_rds(&quot;data/fav-food-clean.rds&quot;)
+fav_food_clean %&gt;%
+  count(ses)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   ses        n
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 Low        1
+## 2 Middle     2
+## 3 High       2</code></pre>
+</div>
+</div>

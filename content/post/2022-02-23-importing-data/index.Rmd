@@ -1,0 +1,168 @@
+---
+title: Importing Data
+author: R Package Build
+date: '2022-02-23'
+slug: importing-data
+categories: []
+tags: []
+---
+# Call packages
+```{r warning=FALSE}
+library(tidyverse)
+library(readr)
+library(readxl)
+```
+
+
+# Import Data
+```{r warning=FALSE}
+url <- "https://raw.githubusercontent.com/thayerm/tidyverse/main/nobel.csv"
+nobel <- read_csv(url)
+```
+
+# Write data
+## Data File
+```{r}
+df <- tribble(
+  ~x, ~y,
+  1,  "a",
+  2,  "b",
+  3,  "c"
+)
+write_csv(df, file = "data/df.csv")
+# Read to inspect it
+read_csv("data/df.csv")
+```
+# Naming variables
+## Data w Bad Names
+```{r}
+edibnb_badnames <- read_csv("https://raw.githubusercontent.com/thayerm/tidyverse/main/edibnb-badnames.csv")
+names(edibnb_badnames)
+```
+## Error from spaces in variable name
+```{r}
+#ggplot(edibnb_badnames, #aes(x = Number of #bathrooms, y = Price)) +
+#  geom_point()
+```
+## To fix error - Define column names
+```{r}
+edibnb_col_names <- read_csv("https://raw.githubusercontent.com/thayerm/tidyverse/main/edibnb-badnames.csv",
+                             col_names = c("id", "price", 
+                                           "neighbourhood", "accommodates",
+                                           "bathroom", "bedroom", 
+                                           "bed", "review_scores_rating", 
+                                           "n_reviews", "url"))
+names(edibnb_col_names)
+```
+## Format text to snake case
+```{r}
+edibnb_clean_names <- read_csv("https://raw.githubusercontent.com/thayerm/tidyverse/main/edibnb-badnames.csv") %>%
+  janitor::clean_names()
+names(edibnb_clean_names)
+```
+
+# Variable types
+```{r}
+read_csv("https://raw.githubusercontent.com/thayerm/tidyverse/main/df-na.csv")
+```
+## Explicit NAs
+```{r}
+read_csv("https://raw.githubusercontent.com/thayerm/tidyverse/main/df-na.csv", 
+         na = c("", "NA", ".", "9999", "Not applicable"))
+# Set problem elements to na directly
+```
+## Specify Column Types
+```{r}
+read_csv("https://raw.githubusercontent.com/thayerm/tidyverse/main/df-na.csv", col_types = list(col_double(), 
+                                            col_character(), 
+                                            col_character()))
+```
+## Different Column Types
+- col_character() -	character
+- col_date() -	date
+- col_datetime() -	POSIXct (date-time)
+- col_double() -	double (numeric)
+- col_factor() -	factor
+- col_guess() -	let readr guess (default)
+- col_integer() -	integer
+- col_logical() -	logical
+- col_number() -	numbers mixed with non-number characters
+- col_numeric() -	double or integer
+- col_skip() -	do not read
+- col_time() -	time
+
+# Case Study
+## Get data
+```{r}
+fav_food <- read_excel("data/favourite-food.xlsx")
+fav_food
+```
+## Variable Names
+```{r}
+fav_food <- read_excel("data/favourite-food.xlsx") %>%
+  janitor::clean_names()
+fav_food
+```
+# Deal With NAs
+```{r}
+fav_food <- read_excel("data/favourite-food.xlsx",
+                       na = c("N/A", "99999")) %>%
+  janitor::clean_names()
+fav_food
+```
+## Change Age to Numeric
+```{r}
+fav_food <- fav_food %>%
+  mutate(
+    age = if_else(age == "five", "5", age),
+    age = as.numeric(age)
+    )
+glimpse(fav_food)
+```
+
+## Sort by Socio-Economic Status
+```{r}
+fav_food %>%
+  count(ses)
+```
+## Make SES a factor
+```{r}
+fav_food <- fav_food %>%
+  mutate(ses = fct_relevel(ses, "Low", "Middle", "High"))
+fav_food %>%
+  count(ses)
+```
+## Putting it all together to create a better data frame
+```{r}
+fav_food <- read_excel("data/favourite-food.xlsx", na = c("N/A", "99999")) %>%
+  janitor::clean_names() %>%
+  mutate(
+    age = if_else(age == "five", "5", age), 
+    age = as.numeric(age),
+    ses = fct_relevel(ses, "Low", "Middle", "High")
+  )
+fav_food
+```
+## Read and Write file
+```{r}
+write_csv(fav_food, file = "data/fav-food-clean.csv")
+fav_food_clean <- read_csv("data/fav-food-clean.csv")
+```
+## Note SES is no longer a factor
+```{r}
+fav_food_clean %>%
+  count(ses)
+```
+## Use write_rds and read_rds to preserve certain variable type info
+```{r}
+write_rds(fav_food, file = "data/fav-food-clean.rds")
+fav_food_clean <- read_rds("data/fav-food-clean.rds")
+fav_food_clean %>%
+  count(ses)
+```
+
+
+
+
+
+
