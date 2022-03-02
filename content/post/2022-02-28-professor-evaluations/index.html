@@ -48,11 +48,11 @@ library(&quot;gapminder&quot;)</code></pre>
 <pre><code>## # A tibble: 5 x 4
 ##      ID score bty_avg   age
 ##   &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;
-## 1   414   4.2    6.83    54
-## 2   322   3.9    2.33    52
-## 3   375   3.7    4.17    43
-## 4    51   4.3    5.5     47
-## 5   353   4.9    3.33    50</code></pre>
+## 1    46   4.7    4.67    33
+## 2   458   4.1    6.83    32
+## 3    83   4.6    4.17    45
+## 4   360   3.9    5.83    52
+## 5    68   4.1    4.83    42</code></pre>
 </div>
 <div id="summary-data" class="section level3">
 <h3>Summary Data</h3>
@@ -150,8 +150,8 @@ library(&quot;gapminder&quot;)</code></pre>
 <pre class="r"><code>plot(evals_ch5$score, evals_ch5$bty_avg)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
-<div id="linear-correlation-of-score-by-bty_avg-two-methods" class="section level3">
-<h3>Linear correlation of score by bty_avg (two methods)</h3>
+<div id="linear-correlation-of-score-and-bty_avg-two-methods" class="section level3">
+<h3>Linear correlation of score and bty_avg (two methods)</h3>
 <pre class="r"><code>evals_ch5 %&gt;% 
   get_correlation(formula = score ~ bty_avg)</code></pre>
 <pre><code>## # A tibble: 1 x 1
@@ -174,6 +174,14 @@ library(&quot;gapminder&quot;)</code></pre>
        y = &quot;Teaching Score&quot;,
        title = &quot;Scatterplot of relationship of teaching and beauty scores&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+### Plot Jittered</p>
+<pre class="r"><code>ggplot(evals_ch5, aes(x = bty_avg, y = score)) +
+  geom_point() +
+  geom_jitter() +
+  labs(x = &quot;Beauty Score&quot;, 
+       y = &quot;Teaching Score&quot;,
+       title = &quot;Scatterplot of relationship of teaching and beauty scores&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" />
 ### With line of best fit</p>
 <pre class="r"><code>ggplot(evals_ch5, aes(x = bty_avg, y = score)) +
   geom_point() +
@@ -181,7 +189,7 @@ library(&quot;gapminder&quot;)</code></pre>
        title = &quot;Relationship between teaching and beauty scores&quot;) +  
   geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <pre class="r"><code># Fit regression model:
 score_model &lt;- lm(score ~ bty_avg, data = evals_ch5)
 # Get regression table:
@@ -219,7 +227,7 @@ regression_points</code></pre>
        title = &quot;Relationship between teaching and beauty scores&quot;) +  
   geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <pre class="r"><code># Fit regression model:
 score_model_age &lt;- lm(score ~ age, data = evals_ch5)
 # Get regression table:

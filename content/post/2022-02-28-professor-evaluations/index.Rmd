@@ -44,7 +44,7 @@ evals_ch5 %>% select(score, bty_avg) %>% skim()
 plot(evals_ch5$score, evals_ch5$bty_avg)
 ```
 
-### Linear correlation of score by bty_avg (two methods)
+### Linear correlation of score and bty_avg (two methods)
 ```{r}
 evals_ch5 %>% 
   get_correlation(formula = score ~ bty_avg)
@@ -65,6 +65,15 @@ ggplot(evals_ch5, aes(x = bty_avg, y = score)) +
        y = "Teaching Score",
        title = "Scatterplot of relationship of teaching and beauty scores")
 ```
+### Plot Jittered
+```{r}
+ggplot(evals_ch5, aes(x = bty_avg, y = score)) +
+  geom_point() +
+  geom_jitter() +
+  labs(x = "Beauty Score", 
+       y = "Teaching Score",
+       title = "Scatterplot of relationship of teaching and beauty scores")
+```
 ### With line of best fit 
 ```{r}
 ggplot(evals_ch5, aes(x = bty_avg, y = score)) +
@@ -77,7 +86,7 @@ ggplot(evals_ch5, aes(x = bty_avg, y = score)) +
 # Fit regression model:
 score_model <- lm(score ~ bty_avg, data = evals_ch5)
 # Get regression table:
-get_regression_table(score_model)
+get_regression_table(score_model) # statistic is z score
 ```
 ### Get regression points
 ```{r}
