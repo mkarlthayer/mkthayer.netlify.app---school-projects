@@ -1,0 +1,10 @@
+---
+title: Validation
+author: ''
+date: '2022-03-16'
+slug: validation
+categories: []
+tags: []
+---
+## Using R in Google Colab for Cross Validation
+<script src="https://gist.github.com/thayerm/d1835a5c3d14ecbd096a80aaf0e83ef1.js"></script>
