@@ -1,0 +1,26 @@
+---
+title: Modeling for Prediction
+author: ''
+date: '2022-03-18'
+slug: modeling-for-prediction
+categories: []
+tags: []
+---
+
+## Advantages and Disadvantages of K-fold cross validation relative to Single Split Validation Set Approach
+### Advantages
+- It takes less computational power and time to run a K-fold cross validation 
+
+### Disadvantages
+- It is less accurate using a Single Split Validation Set Approach compared to LOOCV
+ 
+## Advantages and Disadvantages of K-fold cross validation relative to LOOCV Approach
+### Advantages
+- It is more accurate using a LOOCV approach than a Single Split Validation Set approach
+
+### Disadvantages
+- It takes more computational power and time to run a K-fold cross validation using LOOCV compared to a Single Split Set
+
+## Pros and cons of Bootstrapping
+### Pros
+- 
