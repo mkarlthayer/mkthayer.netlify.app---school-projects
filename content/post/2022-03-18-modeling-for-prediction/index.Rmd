@@ -70,12 +70,12 @@ cv.error.1 <- rep(0,5)
 degree <- 1:5
 for (d in degree) {
    glm.fit <- glm(X1_transaction_date~poly(Y_house_price_of_unit_area,d), data = real_estate)
-   error1[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+   cv.error.1[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
 cv.error.2<- rep(0,5)
 for (d in degree) {
    glm.fit <- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate)
-   error2[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+   cv.error.2[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
 cv.error.3<- rep(0,5)
 for (d in degree) {

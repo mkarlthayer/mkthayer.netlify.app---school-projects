@@ -60,21 +60,15 @@ tags: []
 <div id="data-from-github" class="section level3">
 <h3>Data from github</h3>
 <pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
-<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## Warning in as.POSIXlt.POSIXct(Sys.time()): unable to identify current timezone &#39;H&#39;:
-## please set environment variable &#39;TZ&#39;</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
 ## v tibble  3.1.3     v dplyr   1.0.7
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   2.1.2     v forcats 0.5.1</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>real_estate_data &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-18-modeling-for-prediction/data/Real%20estate%20valuation%20data%20set.csv&quot;)</code></pre>
+<pre class="r"><code>real_estate &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-18-modeling-for-prediction/data/Real%20estate%20valuation%20data%20set.csv&quot;)</code></pre>
 <pre><code>## Rows: 414 Columns: 8</code></pre>
 <pre><code>## -- Column specification --------------------------------------------------------
 ## Delimiter: &quot;,&quot;
@@ -83,15 +77,15 @@ tags: []
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div id="bootstrapping-model" class="section level3">
-<h3>Bootstrapping Model</h3>
-<pre class="r"><code>library(ISLR)</code></pre>
-<pre><code>## Warning: package &#39;ISLR&#39; was built under R version 4.1.3</code></pre>
-<pre class="r"><code>library(boot)</code></pre>
-<pre><code>## Warning: package &#39;boot&#39; was built under R version 4.1.3</code></pre>
+<div id="k-folds-model" class="section level3">
+<h3>K-folds Model</h3>
+<div id="the-k-folds-model-with-the-lowest-error-uses-latitude-as-a-predictor-of-price-with-a-degree-of-3-and-the-highest-allowed-k-value-of-104" class="section level4">
+<h4>The K-folds model with the lowest error uses latitude as a predictor of price with a degree of 3, and the highest allowed K value of 104</h4>
+<pre class="r"><code>library(ISLR)
+library(boot)</code></pre>
 <pre class="r"><code>## Set Seed: To reproduce the sampling for train - test split
 set.seed(1)
-head(real_estate_data)</code></pre>
+head(real_estate)</code></pre>
 <pre><code>## # A tibble: 6 x 8
 ##      No X1_transaction_date X2_house_age X3_distance_to_the_~ X4_number_of_conv~
 ##   &lt;dbl&gt;               &lt;dbl&gt;        &lt;dbl&gt;                &lt;dbl&gt;              &lt;dbl&gt;
@@ -103,38 +97,90 @@ head(real_estate_data)</code></pre>
 ## 6     6               2013.          7.1               2175.                   3
 ## # ... with 3 more variables: X5_latitude &lt;dbl&gt;, X6_longitude &lt;dbl&gt;,
 ## #   Y_house_price_of_unit_area &lt;dbl&gt;</code></pre>
-<pre class="r"><code>dim(real_estate_data)</code></pre>
+<pre class="r"><code>dim(real_estate)</code></pre>
 <pre><code>## [1] 414   8</code></pre>
-<pre class="r"><code>## Create an index to randomly sample 50% records for data set real_estate_data
+<pre class="r"><code>## Create an index to randomly sample 50% records for data set real_estate
 train &lt;- sample(414, 207)
 head(train)</code></pre>
 <pre><code>## [1] 324 167 129 299 270 187</code></pre>
 <pre class="r"><code># attach columns
-attach(real_estate_data)</code></pre>
-<pre class="r"><code>lm.fit &lt;- lm(X1_transaction_date~Y_house_price_of_unit_area, data = real_estate_data, subset = train)</code></pre>
-<pre class="r"><code>K=100
+attach(real_estate)</code></pre>
+<pre class="r"><code>lm.fit &lt;- lm(X1_transaction_date~Y_house_price_of_unit_area, data = real_estate, subset = train)</code></pre>
+<pre class="r"><code>K=104
 
-error &lt;- rep(0,5)
+cv.error.1 &lt;- rep(0,5)
 degree &lt;- 1:5
 for (d in degree) {
-   glm.fit &lt;- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error[d] &lt;-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit &lt;- glm(X1_transaction_date~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.1[d] &lt;-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+}
+cv.error.2&lt;- rep(0,5)
+for (d in degree) {
+   glm.fit &lt;- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.2[d] &lt;-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+}
+cv.error.3&lt;- rep(0,5)
+for (d in degree) {
+   glm.fit &lt;- glm(X3_distance_to_the_nearest_MRT_station~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.3[d] &lt;-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+}
+cv.error.4&lt;- rep(0,5)
+for (d in degree) {
+   glm.fit &lt;- glm(X4_number_of_convenience_stores~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.4[d] &lt;-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+}
+cv.error.5&lt;- rep(0,5)
+for (d in degree) {
+   glm.fit &lt;- glm(X5_latitude~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.5[d] &lt;-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+}
+cv.error.6&lt;- rep(0,5)
+for (d in degree) {
+   glm.fit &lt;- glm(X6_longitude~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.6[d] &lt;-cv.glm(real_estate,glm.fit, K = K)$delta[1]
+}
+cv.error.1</code></pre>
+<pre><code>## [1] 0.07930962 0.07981687 0.09392954 0.08305730 0.27892977</code></pre>
+<pre class="r"><code>cv.error.2</code></pre>
+<pre><code>## [1]  125.0185  127.0436  162.4392 2220.3257  546.4214</code></pre>
+<pre class="r"><code>cv.error.3</code></pre>
+<pre><code>## [1]   887295.4   819391.4   631378.8  3573796.6 67002112.2</code></pre>
+<pre class="r"><code>cv.error.4</code></pre>
+<pre><code>## [1]  5.940441  5.377990  5.422771 35.146291 19.562792</code></pre>
+<pre class="r"><code>cv.error.5</code></pre>
+<pre><code>## [1] 1.094900e-04 1.051456e-04 8.870963e-05 5.589514e-04 3.538582e-03</code></pre>
+<pre class="r"><code>cv.error.6</code></pre>
+<pre><code>## [1] 0.0001736606 0.0001589755 0.0001634157 0.0002168210 0.0061326773</code></pre>
+</div>
+</div>
+<div id="bootstrapping-model" class="section level3">
+<h3>Bootstrapping Model</h3>
+<div id="using-latitude-and-10000-replications-the-bootstrap-model-provided-a-very-normal-distribution-and-low-levels-of-bias-and-standard-error" class="section level4">
+<h4>Using latitude and 10000 replications the bootstrap model provided a very normal distribution and low levels of bias and standard error</h4>
+<pre class="r"><code>## Boot function
+boot.fn &lt;- function(data, index) {
+  return(coef(lm(X5_latitude~Y_house_price_of_unit_area, data=data, subset=index)))
 }</code></pre>
-<pre><code>## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
-## 104.000000
-
-## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
-## 104.000000
-
-## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
-## 104.000000
-
-## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
-## 104.000000
-
-## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
-## 104.000000</code></pre>
-<pre class="r"><code>error</code></pre>
-<pre><code>## [1]  124.8990  126.6628  161.4789 2427.4568  703.2036</code></pre>
+<pre class="r"><code>set.seed(1)
+boot.fn(real_estate, sample(414,414,replace=T))</code></pre>
+<pre><code>##                (Intercept) Y_house_price_of_unit_area 
+##               24.954110345                0.000389347</code></pre>
+<pre class="r"><code>output &lt;- boot(real_estate,boot.fn,10000)
+plot(output)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>output</code></pre>
+<pre><code>## 
+## ORDINARY NONPARAMETRIC BOOTSTRAP
+## 
+## 
+## Call:
+## boot(data = real_estate, statistic = boot.fn, R = 10000)
+## 
+## 
+## Bootstrap Statistics :
+##         original        bias     std. error
+## t1* 24.950105491 -8.204281e-05 1.999095e-03
+## t2*  0.000498275  2.652567e-06 5.045744e-05</code></pre>
+</div>
 </div>
 </div>
