@@ -42,7 +42,99 @@ tags: []
 </div>
 <div id="pros-and-cons-of-bootstrapping" class="section level2">
 <h2>Pros and cons of Bootstrapping</h2>
+<div id="pros" class="section level3">
+<h3>Pros</h3>
+<ul>
+<li>Increases size of data set</li>
+<li>Normalizes data set</li>
+<li>Way of deriving estimates of confidence interval and standard error</li>
+</ul>
 </div>
-<div id="pros" class="section level2">
-<h2>### Pros</h2>
+<div id="cons" class="section level3">
+<h3>Cons</h3>
+<ul>
+<li>Doesn’t give new information about population</li>
+<li>Undervalues rare/extreme values in data set</li>
+</ul>
+</div>
+<div id="data-from-github" class="section level3">
+<h3>Data from github</h3>
+<pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning in as.POSIXlt.POSIXct(Sys.time()): unable to identify current timezone &#39;H&#39;:
+## please set environment variable &#39;TZ&#39;</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.3     v dplyr   1.0.7
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>real_estate_data &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-18-modeling-for-prediction/data/Real%20estate%20valuation%20data%20set.csv&quot;)</code></pre>
+<pre><code>## Rows: 414 Columns: 8</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## dbl (8): No, X1_transaction_date, X2_house_age, X3_distance_to_the_nearest_M...</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="bootstrapping-model" class="section level3">
+<h3>Bootstrapping Model</h3>
+<pre class="r"><code>library(ISLR)</code></pre>
+<pre><code>## Warning: package &#39;ISLR&#39; was built under R version 4.1.3</code></pre>
+<pre class="r"><code>library(boot)</code></pre>
+<pre><code>## Warning: package &#39;boot&#39; was built under R version 4.1.3</code></pre>
+<pre class="r"><code>## Set Seed: To reproduce the sampling for train - test split
+set.seed(1)
+head(real_estate_data)</code></pre>
+<pre><code>## # A tibble: 6 x 8
+##      No X1_transaction_date X2_house_age X3_distance_to_the_~ X4_number_of_conv~
+##   &lt;dbl&gt;               &lt;dbl&gt;        &lt;dbl&gt;                &lt;dbl&gt;              &lt;dbl&gt;
+## 1     1               2013.         32                   84.9                 10
+## 2     2               2013.         19.5                307.                   9
+## 3     3               2014.         13.3                562.                   5
+## 4     4               2014.         13.3                562.                   5
+## 5     5               2013.          5                  391.                   5
+## 6     6               2013.          7.1               2175.                   3
+## # ... with 3 more variables: X5_latitude &lt;dbl&gt;, X6_longitude &lt;dbl&gt;,
+## #   Y_house_price_of_unit_area &lt;dbl&gt;</code></pre>
+<pre class="r"><code>dim(real_estate_data)</code></pre>
+<pre><code>## [1] 414   8</code></pre>
+<pre class="r"><code>## Create an index to randomly sample 50% records for data set real_estate_data
+train &lt;- sample(414, 207)
+head(train)</code></pre>
+<pre><code>## [1] 324 167 129 299 270 187</code></pre>
+<pre class="r"><code># attach columns
+attach(real_estate_data)</code></pre>
+<pre class="r"><code>lm.fit &lt;- lm(X1_transaction_date~Y_house_price_of_unit_area, data = real_estate_data, subset = train)</code></pre>
+<pre class="r"><code>K=100
+
+error &lt;- rep(0,5)
+degree &lt;- 1:5
+for (d in degree) {
+   glm.fit &lt;- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error[d] &lt;-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}</code></pre>
+<pre><code>## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
+## 104.000000
+
+## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
+## 104.000000
+
+## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
+## 104.000000
+
+## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
+## 104.000000
+
+## Warning in cv.glm(real_estate_data, glm.fit, K = K): &#39;K&#39; has been set to
+## 104.000000</code></pre>
+<pre class="r"><code>error</code></pre>
+<pre><code>## [1]  124.8990  126.6628  161.4789 2427.4568  703.2036</code></pre>
+</div>
 </div>

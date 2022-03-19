@@ -22,5 +22,107 @@ tags: []
 - It takes more computational power and time to run a K-fold cross validation using LOOCV compared to a Single Split Set
 
 ## Pros and cons of Bootstrapping
+
 ### Pros
-- 
+- Increases size of data set
+- Normalizes data set
+- Way of deriving estimates of confidence interval and standard error
+
+### Cons
+- Doesn't give new information about population
+- Undervalues rare/extreme values in data set
+
+### Data from github
+```{r}
+library("tidyverse")
+real_estate_data <- read_csv("https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-18-modeling-for-prediction/data/Real%20estate%20valuation%20data%20set.csv")
+```
+### K-folds Model
+
+```{r}
+library(ISLR)
+library(boot)
+```
+
+```{r}
+
+## Set Seed: To reproduce the sampling for train - test split
+set.seed(1)
+head(real_estate_data)
+dim(real_estate_data)
+## Create an index to randomly sample 50% records for data set real_estate_data
+train <- sample(414, 207)
+head(train)
+```
+```{r}
+# attach columns
+attach(real_estate_data)
+```
+```{r}
+lm.fit <- lm(X1_transaction_date~Y_house_price_of_unit_area, data = real_estate_data, subset = train)
+```
+
+```{r}
+K=104
+
+error1 <- rep(0,5)
+degree <- 1:5
+for (d in degree) {
+   glm.fit <- glm(X1_transaction_date~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error1[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}
+error2<- rep(0,5)
+for (d in degree) {
+   glm.fit <- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error2[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}
+error3<- rep(0,5)
+for (d in degree) {
+   glm.fit <- glm(X3_distance_to_the_nearest_MRT_station~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error3[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}
+error4<- rep(0,5)
+for (d in degree) {
+   glm.fit <- glm(X4_number_of_convenience_stores~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error4[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}
+error5<- rep(0,5)
+for (d in degree) {
+   glm.fit <- glm(X5_latitude~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error5[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}
+error6<- rep(0,5)
+for (d in degree) {
+   glm.fit <- glm(X6_longitude~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
+   error6[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+}
+error1
+error2
+error3
+error4
+error5
+error6
+```
+The K-folds model with the lowest error uses latitude as a predictor of price with a degree of 3, and the highest allowed K value of 104
+
+### Bootstrapping Model
+```{r}
+## Boot function
+boot.fn <- function(data, index) {
+  return(coef(lm(X1_transaction_date~Y_house_price_of_unit_area, data=data, subset=index)))
+}
+```
+```{r}
+set.seed(1)
+boot.fn(real_estate_data, sample(414,414,replace=T))
+```
+
+```{r}
+output <- boot(real_estate_data,boot.fn,10000)
+plot(output)
+```
+
+```{r}
+output
+```
+
