@@ -33,13 +33,14 @@ tags: []
 - Undervalues rare/extreme values in data set
 
 ### Data from github
-```{r}
+```{r show_col_types = FALSE, warning=FALSE}
 library("tidyverse")
-real_estate_data <- read_csv("https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-18-modeling-for-prediction/data/Real%20estate%20valuation%20data%20set.csv")
+real_estate <- read_csv("https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-18-modeling-for-prediction/data/Real%20estate%20valuation%20data%20set.csv")
 ```
 ### K-folds Model
 
-```{r}
+#### The K-folds model with the lowest error uses latitude as a predictor of price with a degree of 3, and the highest allowed K value of 104
+```{r warning=FALSE}
 library(ISLR)
 library(boot)
 ```
@@ -48,81 +49,84 @@ library(boot)
 
 ## Set Seed: To reproduce the sampling for train - test split
 set.seed(1)
-head(real_estate_data)
-dim(real_estate_data)
-## Create an index to randomly sample 50% records for data set real_estate_data
+head(real_estate)
+dim(real_estate)
+## Create an index to randomly sample 50% records for data set real_estate
 train <- sample(414, 207)
 head(train)
 ```
 ```{r}
 # attach columns
-attach(real_estate_data)
+attach(real_estate)
 ```
 ```{r}
-lm.fit <- lm(X1_transaction_date~Y_house_price_of_unit_area, data = real_estate_data, subset = train)
+lm.fit <- lm(X1_transaction_date~Y_house_price_of_unit_area, data = real_estate, subset = train)
 ```
 
 ```{r}
 K=104
 
-error1 <- rep(0,5)
+cv.error.1 <- rep(0,5)
 degree <- 1:5
 for (d in degree) {
-   glm.fit <- glm(X1_transaction_date~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error1[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit <- glm(X1_transaction_date~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   error1[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
-error2<- rep(0,5)
+cv.error.2<- rep(0,5)
 for (d in degree) {
-   glm.fit <- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error2[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit <- glm(X2_house_age~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   error2[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
-error3<- rep(0,5)
+cv.error.3<- rep(0,5)
 for (d in degree) {
-   glm.fit <- glm(X3_distance_to_the_nearest_MRT_station~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error3[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit <- glm(X3_distance_to_the_nearest_MRT_station~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.3[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
-error4<- rep(0,5)
+cv.error.4<- rep(0,5)
 for (d in degree) {
-   glm.fit <- glm(X4_number_of_convenience_stores~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error4[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit <- glm(X4_number_of_convenience_stores~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.4[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
-error5<- rep(0,5)
+cv.error.5<- rep(0,5)
 for (d in degree) {
-   glm.fit <- glm(X5_latitude~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error5[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit <- glm(X5_latitude~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.5[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
-error6<- rep(0,5)
+cv.error.6<- rep(0,5)
 for (d in degree) {
-   glm.fit <- glm(X6_longitude~poly(Y_house_price_of_unit_area,d), data = real_estate_data)
-   error6[d] <-cv.glm(real_estate_data,glm.fit, K = K)$delta[1]
+   glm.fit <- glm(X6_longitude~poly(Y_house_price_of_unit_area,d), data = real_estate)
+   cv.error.6[d] <-cv.glm(real_estate,glm.fit, K = K)$delta[1]
 }
-error1
-error2
-error3
-error4
-error5
-error6
+cv.error.1
+cv.error.2
+cv.error.3
+cv.error.4
+cv.error.5
+cv.error.6
 ```
-The K-folds model with the lowest error uses latitude as a predictor of price with a degree of 3, and the highest allowed K value of 104
+
 
 ### Bootstrapping Model
+
+#### Using latitude and 10000 replications the bootstrap model provided a very normal distribution and low levels of bias and standard error
 ```{r}
 ## Boot function
 boot.fn <- function(data, index) {
-  return(coef(lm(X1_transaction_date~Y_house_price_of_unit_area, data=data, subset=index)))
+  return(coef(lm(X5_latitude~Y_house_price_of_unit_area, data=data, subset=index)))
 }
 ```
 ```{r}
 set.seed(1)
-boot.fn(real_estate_data, sample(414,414,replace=T))
+boot.fn(real_estate, sample(414,414,replace=T))
 ```
 
 ```{r}
-output <- boot(real_estate_data,boot.fn,10000)
+output <- boot(real_estate,boot.fn,10000)
 plot(output)
 ```
 
 ```{r}
 output
 ```
+
 
