@@ -9,17 +9,20 @@ tags: []
 
 ## Advantages and Disadvantages of K-fold cross validation relative to Single Split Validation Set Approach
 ### Advantages
-- It takes less computational power and time to run a K-fold cross validation 
+- There is less variance using a K-fold cross validation than a Single Split Validation Set Approach
+- Less randomness due to smaller size of test and training sets
 
 ### Disadvantages
-- It is less accurate using a Single Split Validation Set Approach compared to LOOCV
+- It takes more computational power to run a K-fold cross validation than a Single Split Validation
+
  
 ## Advantages and Disadvantages of K-fold cross validation relative to LOOCV Approach
 ### Advantages
-- It is more accurate using a LOOCV approach than a Single Split Validation Set approach
+- Reduces randomness in the training/test sets, less affected by outliers in the data set than LOOCV
+- It takes less computational power and time to run a K-fold cross validation than a LOOCV
 
 ### Disadvantages
-- It takes more computational power and time to run a K-fold cross validation using LOOCV compared to a Single Split Set
+- There is more variance using a K-fold cross validation approach than a LOOCV approach
 
 ## Pros and cons of Bootstrapping
 
