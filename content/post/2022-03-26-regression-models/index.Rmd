@@ -19,7 +19,6 @@ library(boot)
 #Get Data and transform as necessary (make Wholesaler a factor)
 ```{r}
 df <- read_excel("data/Professor_Proposes_Data.xlsx")
-df$Price <- as.numeric(df$Price)
 df$Wholesaler <- as.factor(df$Wholesaler)
 ```
 
