@@ -60,15 +60,13 @@ dim(df23)
 df23 %>%
   ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut, size = Clarity)) +
   geom_point()
+# Larger Carat and better cut usually leads to higher prices, especially with wholesaler 3
 ```
 ```{r}
 df23 %>%
   ggplot(aes(x=Symmetry,y=Price, shape=Certification, color=Polish)) +
-  geom_point() +
-  theme(
-    legend.title = element_text(size = 2), 
-    legend.text = element_text(size = 2)
-    )
+  geom_point() 
+# We see the highest rated symmetry and polish lead to higher prices, this data makes sense intuitively
 ```
 
 
