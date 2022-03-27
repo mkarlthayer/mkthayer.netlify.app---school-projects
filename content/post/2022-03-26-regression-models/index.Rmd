@@ -6,3 +6,87 @@ slug: regression-models
 categories: []
 tags: []
 ---
+## The model predicts the price to be $2844.49 which makes the price of $3100 slightly high, but not a rip off (work below)
+
+#Call Libraries
+```{r}
+library(tidyverse)
+library(readxl)
+library(ISLR)
+library(boot)
+```
+
+#Get Data and transform as necessary (make Wholesaler a factor)
+```{r}
+df <- read_excel("data/Professor_Proposes_Data.xlsx")
+df$Price <- as.numeric(df$Price)
+df$Wholesaler <- as.factor(df$Wholesaler)
+```
+
+```{r}
+## Set Seed: To reproduce the sampling for train - test split
+set.seed(1)
+head(df)
+dim(df)
+## Create an index to randomly sample 50% records for data set df
+train <- sample(440,220)
+head(train)
+```
+```{r}
+attach(df)
+#attach data frame
+```
+
+# Exploratory Data Analysis
+```{r}
+df %>%
+  ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut)) +
+  geom_point()
+```
+```{r}
+df1 <- df %>%
+  filter(Wholesaler == 3)
+
+max(df1$Carat)
+#The largest Carat used by the the third Wholesaler is just 0.3, since the professor wants a 0.9 Carat diamond, its better to focus on data from the 1st and 2nd wholesaler wehere he will have to buy from
+```
+```{r}
+df23 <- df %>%
+  filter(Wholesaler == 2 | Wholesaler == 1)
+# Data set only looking at the 1st and second wholesaler
+# dimensions on new df
+dim(df23)
+
+df23 %>%
+  ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut, size = Clarity)) +
+  geom_point()
+```
+```{r}
+df23 %>%
+  ggplot(aes(x=Symmetry,y=Price, shape=Certification, color=Polish)) +
+  geom_point() +
+  theme(
+    legend.title = element_text(size = 2), 
+    legend.text = element_text(size = 2)
+    )
+```
+
+
+
+### Bootstrapping Model
+
+### Using the coefficients given from the model you get the equation: Price = -288.74062 + 2686.4570(0.9) + 15.51392(1) - 465.49086(1) + 618.77332(1) + 489.84803(1) + 72.08555(1) - 15.23534(1) = 2844.49
+
+
+```{r}
+## Boot function
+boot.fn <- function(data, index) {
+  return(coef(lm(Price~Carat+Colour+Clarity+Cut+Certification+Polish+Symmetry, data=data, subset=index)))
+}
+```
+```{r}
+set.seed(1)
+boot.fn(df23, sample(240,240,replace=T))
+```
+
+

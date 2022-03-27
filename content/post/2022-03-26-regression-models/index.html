@@ -1,0 +1,121 @@
+---
+title: Regression Models
+author: ''
+date: '2022-03-26'
+slug: regression-models
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="the-model-predicts-the-price-to-be-2844.49-which-makes-the-price-of-3100-slightly-high-but-not-a-rip-off-work-below" class="section level2">
+<h2>The model predicts the price to be $2844.49 which makes the price of $3100 slightly high, but not a rip off (work below)</h2>
+<p>#Call Libraries</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning in as.POSIXlt.POSIXct(Sys.time()): unable to identify current timezone &#39;H&#39;:
+## please set environment variable &#39;TZ&#39;</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.3     v dplyr   1.0.7
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(readxl)</code></pre>
+<pre><code>## Warning: package &#39;readxl&#39; was built under R version 4.1.2</code></pre>
+<pre class="r"><code>library(ISLR)</code></pre>
+<pre><code>## Warning: package &#39;ISLR&#39; was built under R version 4.1.3</code></pre>
+<pre class="r"><code>library(boot)</code></pre>
+<pre><code>## Warning: package &#39;boot&#39; was built under R version 4.1.3</code></pre>
+<p>#Get Data and transform as necessary (make Wholesaler a factor)</p>
+<pre class="r"><code>df &lt;- read_excel(&quot;data/Professor_Proposes_Data.xlsx&quot;)
+df$Price &lt;- as.numeric(df$Price)
+df$Wholesaler &lt;- as.factor(df$Wholesaler)</code></pre>
+<pre class="r"><code>## Set Seed: To reproduce the sampling for train - test split
+set.seed(1)
+head(df)</code></pre>
+<pre><code>## # A tibble: 6 x 9
+##   Carat Colour Clarity Cut   Certification Polish Symmetry Price Wholesaler
+##   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt; &lt;fct&gt;     
+## 1  0.92 I      SI2     G     AGS           V      V         3000 1         
+## 2  0.92 I      SI2     V     AGS           G      G         3000 1         
+## 3  0.82 F      SI2     I     GIA           X      X         3004 1         
+## 4  0.81 G      SI1     I     GIA           X      V         3004 1         
+## 5  0.9  J      VS2     V     GIA           V      V         3006 1         
+## 6  0.87 F      SI2     I     AGS           G      V         3007 1</code></pre>
+<pre class="r"><code>dim(df)</code></pre>
+<pre><code>## [1] 440   9</code></pre>
+<pre class="r"><code>## Create an index to randomly sample 50% records for data set df
+train &lt;- sample(440,220)
+head(train)</code></pre>
+<pre><code>## [1] 324 167 129 418 299 270</code></pre>
+<pre class="r"><code>attach(df)
+#attach data frame</code></pre>
+</div>
+<div id="exploratory-data-analysis" class="section level1">
+<h1>Exploratory Data Analysis</h1>
+<pre class="r"><code>df %&gt;%
+  ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut)) +
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>df1 &lt;- df %&gt;%
+  filter(Wholesaler == 3)
+
+max(df1$Carat)</code></pre>
+<pre><code>## [1] 0.3</code></pre>
+<pre class="r"><code>#The largest Carat used by the the third Wholesaler is just 0.3, since the professor wants a 0.9 Carat diamond, its better to focus on data from the 1st and 2nd wholesaler wehere he will have to buy from</code></pre>
+<pre class="r"><code>df23 &lt;- df %&gt;%
+  filter(Wholesaler == 2 | Wholesaler == 1)
+# Data set only looking at the 1st and second wholesaler
+# dimensions on new df
+dim(df23)</code></pre>
+<pre><code>## [1] 240   9</code></pre>
+<pre class="r"><code>df23 %&gt;%
+  ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut, size = Clarity)) +
+  geom_point()</code></pre>
+<pre><code>## Warning: Using size for a discrete variable is not advised.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>df23 %&gt;%
+  ggplot(aes(x=Symmetry,y=Price, shape=Certification, color=Polish)) +
+  geom_point() +
+  theme(
+    legend.title = element_text(size = 2), 
+    legend.text = element_text(size = 2)
+    )</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<div id="bootstrapping-model" class="section level3">
+<h3>Bootstrapping Model</h3>
+</div>
+<div id="using-the-coefficients-given-from-the-model-you-get-the-equation-price--288.74062-2686.45700.9-15.513921---465.490861-618.773321-489.848031-72.085551---15.235341-2844.49" class="section level3">
+<h3>Using the coefficients given from the model you get the equation: Price = -288.74062 + 2686.4570(0.9) + 15.51392(1) - 465.49086(1) + 618.77332(1) + 489.84803(1) + 72.08555(1) - 15.23534(1) = 2844.49</h3>
+<pre class="r"><code>## Boot function
+boot.fn &lt;- function(data, index) {
+  return(coef(lm(Price~Carat+Colour+Clarity+Cut+Certification+Polish+Symmetry, data=data, subset=index)))
+}</code></pre>
+<pre class="r"><code>set.seed(1)
+boot.fn(df23, sample(240,240,replace=T))</code></pre>
+<pre><code>##      (Intercept)            Carat          ColourE          ColourF 
+##       -288.74062       2686.45720         18.51261       -224.88330 
+##          ColourG          ColourH          ColourI          ColourJ 
+##       -238.96022       -253.52221       -341.90000       -465.49086 
+##          ColourK          ColourL        ClarityI2       ClaritySI1 
+##       -818.33910       -837.45941       -608.56655        788.85591 
+##       ClaritySI2       ClaritySI3       ClarityVS1       ClarityVS2 
+##        618.77332        445.77349        896.14503        775.63368 
+##             CutG             CutI             CutV             CutX 
+##         11.87492         39.87405         15.51392         78.05411 
+## CertificationDOW CertificationEGL CertificationGIA          PolishG 
+##       -478.03814       -340.56238        -15.23534        489.84803 
+##          PolishI          PolishV          PolishX        SymmetryG 
+##        533.65413        523.57452        491.24182         72.08555 
+##        SymmetryI        SymmetryV        SymmetryX 
+##               NA         82.01461         59.89269</code></pre>
+</div>
+</div>
