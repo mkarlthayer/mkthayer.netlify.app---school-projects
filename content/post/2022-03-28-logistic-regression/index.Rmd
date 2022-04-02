@@ -1,0 +1,40 @@
+---
+title: Logistic Regression
+author: ''
+date: '2022-03-28'
+slug: logistic-regression
+categories: []
+tags: []
+---
+```{r}
+```
+
+
+```{r}
+library(openintro)
+library(ggridges)
+library(tidyverse)
+```
+```{r}
+glimpse(email)
+attach(email)
+```
+```{r}
+email0 <- email %>%
+  group_by(spam) %>%
+  summarize(mean_num_char = round(mean(num_char),2))
+email0
+```
+
+```{r}
+email %>%
+  ggplot(aes(num_char, y= spam, fill=spam)) +
+  geom_density_ridges2(alpha=0.5)
+```
+
+```{r}
+email %>%
+  ggplot(aes(re_subj,fill=spam)) +
+  geom_bar(position = "fill")
+```
+
