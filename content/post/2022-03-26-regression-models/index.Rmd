@@ -39,7 +39,17 @@ attach(df)
 # Exploratory Data Analysis
 ```{r}
 df %>%
-  ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut)) +
+  ggplot(aes(Price)) +
+  geom_histogram()
+df %>%
+  ggplot(aes(Carat)) +
+  geom_histogram()
+summary(Price) 
+```
+Both Price And Carats have a bimodal distribution that can be explained by the Wholesaler
+```{r}
+df %>%
+  ggplot(aes(x=Carat,y=Price, color=Wholesaler)) +
   geom_point()
 ```
 ```{r}
@@ -57,9 +67,8 @@ df23 <- df %>%
 dim(df23)
 
 df23 %>%
-  ggplot(aes(x=Carat,y=Price, shape=Wholesaler, color=Cut, size = Clarity)) +
+  ggplot(aes(x=Carat,y=Price, color=Wholesaler)) +
   geom_point()
-# Larger Carat and better cut usually leads to higher prices, especially with wholesaler 3
 ```
 ```{r}
 df23 %>%

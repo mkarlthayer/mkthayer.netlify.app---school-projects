@@ -6,3 +6,125 @@ slug: a03-classification-models
 categories: []
 tags: []
 ---
+## Call libraries
+```{r warning=FALSE}
+library(tidyverse)
+library(randomForest)
+```
+## Get data
+```{r }
+test <- read_csv("https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-04-02-a03-classification-models/data/titanic_test.csv")
+train <- read_csv("https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-04-02-a03-classification-models/data/titanic_train.csv")
+
+```
+```{r}
+train$Survived <- as.factor(train$Survived)
+head(train)
+head(test)
+```
+
+```{r warning=FALSE}
+colnames(train)
+attach(train)
+```
+Name and ticket aren't predictive variables so they can be removed
+```{r}
+train <- select(train, -c(Name, Ticket))
+test <- select(test, -c(Name, Ticket))
+```
+
+
+```{r}
+traincomb <- select(train, -Survived)
+all <- rbind(traincomb, test)
+colSums(is.na(all))
+colSums(is.na(train))
+colSums(is.na(test))
+```
+
+```{r}
+dim(train)
+687/891
+
+```
+Most of the Cabin data is missing, not worth including in the model
+
+
+## Impute Age, Embarked, and Fare values
+```{r}
+train[is.na(Age), "Age"] <- median(all$Age, na.rm = TRUE)
+train[is.na(Embarked), "Embarked"] <- "S" # most common value for embarked
+test[is.na(test$Age), "Age"] <- median(all$Age, na.rm = TRUE)
+test[is.na(test$Fare), "Fare"] <- median(all$Fare, na.rm = TRUE)
+colSums(is.na(train))
+colSums(is.na(test))
+```
+Only Cabin has remaining nas, which is fine since it won't be used in the model anyways
+```{r}
+# Turn non-metric variables into factors so they can be used in logistic model
+test$Sex <- as.factor(test$Sex)
+test$Embarked <- as.factor(test$Embarked)
+test$Pclass <- as.factor(test$Pclass)
+train$Sex <- as.factor(train$Sex)
+train$Embarked <- as.factor(train$Embarked)
+train$Pclass <- as.factor(train$Pclass)
+```
+## Exploratory Analysis
+```{r}
+train %>%
+  ggplot(aes(Survived, fill = Sex))+
+  geom_bar(position="fill")
+```
+Much more women then men survived
+
+```{r}
+train %>%
+  ggplot(aes(Fare))+
+  geom_density() +
+  facet_wrap(~Survived)+
+  scale_x_log10()
+
+```
+People with higher fares were more likely to survive than not, where as people with lower fares were more likely to not survive than survive
+
+
+```{r}
+train %>%
+  ggplot(aes(Survived, fill = Embarked))+
+  geom_bar()
+```
+
+
+```{r}
+train %>%
+  ggplot(aes(Age))+
+  geom_density() +
+  facet_wrap(~Survived)
+```
+Age is normally distributed, young children were more likely to survive than not while the opposite is true for 20-30 year olds and 70-80 year olds
+```{r}
+train %>% 
+  ggplot(aes(SibSp, fill=Survived)) +
+  geom_bar(position = "fill")
+```
+```{r}
+train %>% 
+  ggplot(aes(Parch, fill=Survived)) +
+  geom_bar(position = "fill")
+```
+All these variables show trends and should impact accuracy of model
+
+## Random Forest Model to Predict Survivors
+```{r}
+model <- randomForest(formula= Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data = train, ntrees= 100)
+Survived <- predict(model, newdata=test)
+```
+```{r}
+PassengerId <- test$PassengerId
+df <- as.data.frame(PassengerId)
+df$Survived <- Survived
+df
+```
+
+
+

@@ -6,15 +6,16 @@ slug: logistic-regression
 categories: []
 tags: []
 ---
-```{r}
-```
-
-
-```{r}
+```{r warning=FALSE}
 library(openintro)
 library(ggridges)
 library(tidyverse)
+library(tidymodels)
 ```
+```{r}
+set.seed(1)
+```
+
 ```{r}
 glimpse(email)
 attach(email)
@@ -36,5 +37,11 @@ email %>%
 email %>%
   ggplot(aes(re_subj,fill=spam)) +
   geom_bar(position = "fill")
+```
+```{r}
+spam_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(spam ~ num_char, data = email, family = "binomial")
+tidy(spam_fit)
 ```
 
