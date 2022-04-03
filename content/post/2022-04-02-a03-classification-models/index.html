@@ -11,6 +11,10 @@ tags: []
 
 <div id="call-libraries" class="section level2">
 <h2>Call libraries</h2>
+<pre class="r"><code>library(openintro)</code></pre>
+<pre><code>## Loading required package: airports</code></pre>
+<pre><code>## Loading required package: cherryblossom</code></pre>
+<pre><code>## Loading required package: usdata</code></pre>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
@@ -20,7 +24,24 @@ tags: []
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(randomForest)</code></pre>
+<pre class="r"><code>library(tidymodels)</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.2.0 --</code></pre>
+<pre><code>## v broom        0.7.12     v rsample      0.1.1 
+## v dials        0.1.0      v tune         0.2.0 
+## v infer        1.0.0      v workflows    0.2.6 
+## v modeldata    0.1.1      v workflowsets 0.2.1 
+## v parsnip      0.2.1      v yardstick    0.0.9 
+## v recipes      0.2.0</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
+## x scales::discard() masks purrr::discard()
+## x dplyr::filter()   masks stats::filter()
+## x recipes::fixed()  masks stringr::fixed()
+## x dplyr::lag()      masks stats::lag()
+## x yardstick::spec() masks readr::spec()
+## x recipes::step()   masks stats::step()
+## * Dig deeper into tidy modeling with R at https://www.tmwr.org</code></pre>
+<pre class="r"><code>library(ggridges)
+library(randomForest)</code></pre>
 <pre><code>## randomForest 4.7-1</code></pre>
 <pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
 <pre><code>## 
@@ -165,6 +186,23 @@ Age is normally distributed, young children were more likely to survive than not
   geom_bar(position = &quot;fill&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" />
 All these variables show trends and should impact accuracy of model</p>
+<pre class="r"><code>survived_fit &lt;- logistic_reg() %&gt;%
+  set_engine(&quot;glm&quot;) %&gt;%
+  fit(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data = train, family = &quot;binomial&quot;)
+tidy(survived_fit)</code></pre>
+<pre><code>## # A tibble: 10 x 5
+##    term        estimate std.error statistic  p.value
+##    &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)  4.06      0.473       8.60  8.28e-18
+##  2 Pclass2     -0.919     0.297      -3.09  1.99e- 3
+##  3 Pclass3     -2.15      0.298      -7.22  5.13e-13
+##  4 Sexmale     -2.72      0.201     -13.5   1.02e-41
+##  5 Age         -0.0385    0.00786    -4.90  9.43e- 7
+##  6 SibSp       -0.322     0.109      -2.95  3.21e- 3
+##  7 Parch       -0.0933    0.119      -0.785 4.32e- 1
+##  8 Fare         0.00234   0.00247     0.947 3.43e- 1
+##  9 EmbarkedQ   -0.0563    0.381      -0.148 8.83e- 1
+## 10 EmbarkedS   -0.434     0.240      -1.81  6.99e- 2</code></pre>
 </div>
 <div id="random-forest-model-to-predict-survivors" class="section level2">
 <h2>Random Forest Model to Predict Survivors</h2>
@@ -172,16 +210,19 @@ All these variables show trends and should impact accuracy of model</p>
 Survived &lt;- predict(model, newdata=test)</code></pre>
 <pre class="r"><code>PassengerId &lt;- test$PassengerId
 df &lt;- as.data.frame(PassengerId)
-df$Survived &lt;- Survived
-df</code></pre>
+df$Survived &lt;- Survived</code></pre>
+</div>
+<div id="survival-prediction" class="section level1">
+<h1>Survival Prediction</h1>
+<pre class="r"><code>df</code></pre>
 <pre><code>##     PassengerId Survived
 ## 1           892        0
 ## 2           893        0
 ## 3           894        0
 ## 4           895        0
-## 5           896        1
+## 5           896        0
 ## 6           897        0
-## 7           898        1
+## 7           898        0
 ## 8           899        0
 ## 9           900        1
 ## 10          901        0
@@ -194,7 +235,7 @@ df</code></pre>
 ## 17          908        0
 ## 18          909        0
 ## 19          910        0
-## 20          911        1
+## 20          911        0
 ## 21          912        1
 ## 22          913        0
 ## 23          914        1
@@ -279,7 +320,7 @@ df</code></pre>
 ## 102         993        0
 ## 103         994        0
 ## 104         995        0
-## 105         996        1
+## 105         996        0
 ## 106         997        0
 ## 107         998        0
 ## 108         999        0
@@ -332,7 +373,7 @@ df</code></pre>
 ## 155        1046        0
 ## 156        1047        0
 ## 157        1048        1
-## 158        1049        1
+## 158        1049        0
 ## 159        1050        0
 ## 160        1051        1
 ## 161        1052        1
@@ -372,7 +413,7 @@ df</code></pre>
 ## 195        1086        1
 ## 196        1087        0
 ## 197        1088        1
-## 198        1089        1
+## 198        1089        0
 ## 199        1090        0
 ## 200        1091        0
 ## 201        1092        1
@@ -400,7 +441,7 @@ df</code></pre>
 ## 223        1114        1
 ## 224        1115        0
 ## 225        1116        1
-## 226        1117        0
+## 226        1117        1
 ## 227        1118        0
 ## 228        1119        1
 ## 229        1120        0
@@ -557,7 +598,7 @@ df</code></pre>
 ## 380        1271        0
 ## 381        1272        0
 ## 382        1273        0
-## 383        1274        0
+## 383        1274        1
 ## 384        1275        0
 ## 385        1276        0
 ## 386        1277        1

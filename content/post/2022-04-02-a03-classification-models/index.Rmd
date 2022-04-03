@@ -8,7 +8,10 @@ tags: []
 ---
 ## Call libraries
 ```{r warning=FALSE}
+library(openintro)
 library(tidyverse)
+library(tidymodels)
+library(ggridges)
 library(randomForest)
 ```
 ## Get data
@@ -113,6 +116,12 @@ train %>%
   geom_bar(position = "fill")
 ```
 All these variables show trends and should impact accuracy of model
+```{r}
+survived_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data = train, family = "binomial")
+tidy(survived_fit)
+```
 
 ## Random Forest Model to Predict Survivors
 ```{r}
@@ -123,6 +132,9 @@ Survived <- predict(model, newdata=test)
 PassengerId <- test$PassengerId
 df <- as.data.frame(PassengerId)
 df$Survived <- Survived
+```
+# Survival Prediction
+```{r}
 df
 ```
 
