@@ -29,15 +29,21 @@ tags: []
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(readxl)</code></pre>
-<pre><code>## Warning: package &#39;readxl&#39; was built under R version 4.1.2</code></pre>
 <pre class="r"><code>library(ISLR)</code></pre>
 <pre><code>## Warning: package &#39;ISLR&#39; was built under R version 4.1.3</code></pre>
 <pre class="r"><code>library(boot)</code></pre>
 <pre><code>## Warning: package &#39;boot&#39; was built under R version 4.1.3</code></pre>
 <p>#Get Data and transform as necessary (make Wholesaler a factor)</p>
-<pre class="r"><code>df &lt;- read_excel(&quot;data/Professor_Proposes_Data.xlsx&quot;)
-df$Wholesaler &lt;- as.factor(df$Wholesaler)</code></pre>
+<pre class="r"><code>df &lt;- read_csv(&quot;https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-26-regression-models/data/Professor_Proposes_Data.csv&quot;)</code></pre>
+<pre><code>## Rows: 441 Columns: 9
+## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (6): Colour, Clarity, Cut, Certification, Polish, Symmetry
+## dbl (3): Carat, Price, Wholesaler
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>df$Wholesaler &lt;- as.factor(df$Wholesaler)</code></pre>
 <pre class="r"><code>## Set Seed: To reproduce the sampling for train - test split
 set.seed(1)
 head(df)</code></pre>
@@ -51,7 +57,7 @@ head(df)</code></pre>
 ## 5  0.9  J      VS2     V     GIA           V      V         3006 1         
 ## 6  0.87 F      SI2     I     AGS           G      V         3007 1</code></pre>
 <pre class="r"><code>dim(df)</code></pre>
-<pre><code>## [1] 440   9</code></pre>
+<pre><code>## [1] 441   9</code></pre>
 <pre class="r"><code>## Create an index to randomly sample 50% records for data set df
 train &lt;- sample(440,220)
 head(train)</code></pre>
@@ -65,20 +71,87 @@ head(train)</code></pre>
   ggplot(aes(Price)) +
   geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <pre class="r"><code>df %&gt;%
   ggplot(aes(Carat)) +
   geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
-<pre class="r"><code>summary(Price) </code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##     160     520    2169    1717    3012    3145</code></pre>
-<p>Both Price And Carats have a bimodal distribution that can be explained by the Wholesaler</p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-2.png" width="672" />
+Both Price And Carats have a bimodal distributions with a low and high price cluster and a small and large carat cluster</p>
+<pre class="r"><code>table(Certification)</code></pre>
+<pre><code>## Certification
+## AGS DOW EGL GIA IGI 
+##  12   1 119 265  43</code></pre>
+<pre class="r"><code># Split into established and small labs
+levels(Certification) &lt;- list(&quot;GIA/AGS&quot; = c(&quot;GIA&quot;,&quot;AGS&quot;),
+                              &quot;Rest&quot; = c(&quot;DOW&quot;, &quot;IGI&quot;,&quot;EGL&quot;))
+
+table(df$Certification)</code></pre>
+<pre><code>## 
+## AGS DOW EGL GIA IGI 
+##  12   1 119 265  43</code></pre>
+<pre class="r"><code>table(Colour)</code></pre>
+<pre><code>## Colour
+##  D  E  F  G  H  I  J  K  L 
+## 20 54 58 43 71 79 72 31 12</code></pre>
+<pre class="r"><code>levels(Certification) &lt;- list(&quot;Colorless&quot; = c(&quot;D&quot;,&quot;F&quot;,&quot;E&quot;,&quot;G&quot;,&quot;H&quot;,&quot;I&quot;),
+                              &quot;Yellow&quot; = c(&quot;J&quot;, &quot;K&quot;,&quot;L&quot;))
+
+table(df$Colour)</code></pre>
+<pre><code>## 
+##  D  E  F  G  H  I  J  K  L 
+## 20 54 58 43 71 79 72 31 12</code></pre>
+<pre class="r"><code>table(Cut)</code></pre>
+<pre><code>## Cut
+##   F   G   I   V   X 
+##  59  49  86  97 149</code></pre>
+<pre class="r"><code># Even representation of data</code></pre>
+<pre class="r"><code>table(Clarity)</code></pre>
+<pre><code>## Clarity
+##   I1   I2  SI1  SI2  SI3  VS1  VS2 VVS1 VVS2 
+##   82   28  116  110   26   30   41    2    5</code></pre>
+<pre class="r"><code>#Interval scaling
+# df[Clarity == &quot;I1&quot;, &quot;Clarity&quot;] &lt;- &quot;1&quot;
+# df[Clarity == &quot;I2&quot;, &quot;Clarity&quot;] &lt;- &quot;2&quot;
+# df[Clarity == &quot;SI1&quot;, &quot;Clarity&quot;] &lt;- &quot;3&quot;
+# df[Clarity == &quot;SI2&quot;, &quot;Clarity&quot;] &lt;- &quot;4&quot;
+# df[Clarity == &quot;SI3&quot;, &quot;Clarity&quot;] &lt;- &quot;5&quot;
+# df[Clarity == &quot;VS1&quot;, &quot;Clarity&quot;] &lt;- &quot;6&quot;
+# df[Clarity == &quot;VS2&quot;, &quot;Clarity&quot;] &lt;- &quot;7&quot;
+# df[Clarity == &quot;VVS1&quot;, &quot;Clarity&quot;] &lt;- &quot;8&quot;
+# df[Clarity == &quot;VVS2&quot;, &quot;Clarity&quot;] &lt;- &quot;9&quot;
+#df$Clarity &lt;- as.numeric(df$Clarity)
+table(df$Clarity)</code></pre>
+<pre><code>## 
+##   I1   I2  SI1  SI2  SI3  VS1  VS2 VVS1 VVS2 
+##   82   28  116  110   26   30   41    2    5</code></pre>
+<pre class="r"><code>table(Polish)</code></pre>
+<pre><code>## Polish
+##   F   G   I   v   V   X 
+##   5 165   5   1 203  61</code></pre>
+<pre class="r"><code># df[Polish == &quot;F&quot;, &quot;Polish&quot;] &lt;- &quot;Fair to Good&quot;
+# df[Polish == &quot;G&quot;, &quot;Polish&quot;] &lt;- &quot;Fair to Good&quot;
+# df[Polish == &quot;v&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
+# df[Polish == &quot;V&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
+# df[Polish == &quot;I&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
+# df[Polish == &quot;X&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
+table(df$Polish)</code></pre>
+<pre><code>## 
+##   F   G   I   v   V   X 
+##   5 165   5   1 203  61</code></pre>
+<pre class="r"><code>table(Symmetry)</code></pre>
+<pre><code>## Symmetry
+##   F   G   I   V   X 
+##  21 157   5 206  51</code></pre>
+<div id="bivariate-analysis" class="section level2">
+<h2>Bivariate Analysis</h2>
 <pre class="r"><code>df %&gt;%
   ggplot(aes(x=Carat,y=Price, color=Wholesaler)) +
   geom_point()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <pre class="r"><code>df1 &lt;- df %&gt;%
   filter(Wholesaler == 3)
 
@@ -94,38 +167,356 @@ dim(df23)</code></pre>
 <pre class="r"><code>df23 %&gt;%
   ggplot(aes(x=Carat,y=Price, color=Wholesaler)) +
   geom_point()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<pre class="r"><code>df23 %&gt;%
-  ggplot(aes(x=Symmetry,y=Price, shape=Certification, color=Polish)) +
-  geom_point() </code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<pre class="r"><code># We see the highest rated symmetry and polish lead to higher prices, this data makes sense intuitively</code></pre>
-<div id="bootstrapping-model" class="section level3">
-<h3>Bootstrapping Model</h3>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>We can model both the data sets discovered in the bivariate analysis</p>
 </div>
-<div id="using-the-coefficients-given-from-the-model-you-get-the-equation-price--288.74062-2686.45700.9-15.513921---465.490861-618.773321-489.848031-72.085551---15.235341-2844.49" class="section level3">
-<h3>Using the coefficients given from the model you get the equation: Price = -288.74062 + 2686.4570(0.9) + 15.51392(1) - 465.49086(1) + 618.77332(1) + 489.84803(1) + 72.08555(1) - 15.23534(1) = 2844.49</h3>
-<pre class="r"><code>## Boot function
-boot.fn &lt;- function(data, index) {
-  return(coef(lm(Price~Carat+Colour+Clarity+Cut+Certification+Polish+Symmetry, data=data, subset=index)))
-}</code></pre>
-<pre class="r"><code>set.seed(1)
-boot.fn(df23, sample(240,240,replace=T))</code></pre>
-<pre><code>##      (Intercept)            Carat          ColourE          ColourF 
-##       -288.74062       2686.45720         18.51261       -224.88330 
-##          ColourG          ColourH          ColourI          ColourJ 
-##       -238.96022       -253.52221       -341.90000       -465.49086 
-##          ColourK          ColourL        ClarityI2       ClaritySI1 
-##       -818.33910       -837.45941       -608.56655        788.85591 
-##       ClaritySI2       ClaritySI3       ClarityVS1       ClarityVS2 
-##        618.77332        445.77349        896.14503        775.63368 
-##             CutG             CutI             CutV             CutX 
-##         11.87492         39.87405         15.51392         78.05411 
-## CertificationDOW CertificationEGL CertificationGIA          PolishG 
-##       -478.03814       -340.56238        -15.23534        489.84803 
-##          PolishI          PolishV          PolishX        SymmetryG 
-##        533.65413        523.57452        491.24182         72.08555 
-##        SymmetryI        SymmetryV        SymmetryX 
-##               NA         82.01461         59.89269</code></pre>
+<div id="regression" class="section level2">
+<h2>Regression</h2>
+<pre class="r"><code>Carat_Regression &lt;- lm(Price ~ Carat, data = df23)
+coef(Carat_Regression)</code></pre>
+<pre><code>## (Intercept)       Carat 
+##   3740.9843   -980.6041</code></pre>
+<pre class="r"><code>summary(Carat_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat, data = df23)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -904.4 -245.2   76.3  336.7  769.3 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   3741.0      185.4  20.176  &lt; 2e-16 ***
+## Carat         -980.6      183.5  -5.345 2.12e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 347.9 on 238 degrees of freedom
+## Multiple R-squared:  0.1072, Adjusted R-squared:  0.1034 
+## F-statistic: 28.56 on 1 and 238 DF,  p-value: 2.12e-07</code></pre>
+<pre class="r"><code>aov(Carat_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Carat_Regression)
+## 
+## Terms:
+##                    Carat Residuals
+## Sum of Squares   3456697  28800867
+## Deg. of Freedom        1       238
+## 
+## Residual standard error: 347.8679
+## Estimated effects may be unbalanced</code></pre>
+<p>The R2 of just 10.72% suggest a very weak correlation, meaning carat alone can’t explain the price. However, the low P-value suggests Carat is a significant value</p>
+<pre class="r"><code>Clarity_Regression &lt;- lm(Price ~ Clarity, data = df)
+coef(Clarity_Regression)</code></pre>
+<pre><code>## (Intercept)   ClarityI2  ClaritySI1  ClaritySI2  ClaritySI3  ClarityVS1 
+##  2543.14634  -201.21777 -1495.53427  -568.94634    76.23827 -1405.37967 
+##  ClarityVS2 ClarityVVS1 ClarityVVS2 
+## -1654.95122 -1996.14634 -1978.94634</code></pre>
+<pre class="r"><code>summary(Clarity_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Clarity, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2171.2  -571.6  -290.3   582.1  2204.8 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2543.15     107.95  23.558  &lt; 2e-16 ***
+## ClarityI2    -201.22     213.97  -0.940  0.34754    
+## ClaritySI1  -1495.53     141.04 -10.604  &lt; 2e-16 ***
+## ClaritySI2   -568.95     142.62  -3.989 7.79e-05 ***
+## ClaritySI3     76.24     220.02   0.347  0.72913    
+## ClarityVS1  -1405.38     208.58  -6.738 5.17e-11 ***
+## ClarityVS2  -1654.95     186.98  -8.851  &lt; 2e-16 ***
+## ClarityVVS1 -1996.15     699.61  -2.853  0.00454 ** 
+## ClarityVVS2 -1978.95     450.31  -4.395 1.40e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 977.6 on 431 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.3213, Adjusted R-squared:  0.3087 
+## F-statistic:  25.5 on 8 and 431 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>aov(Clarity_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Clarity_Regression)
+## 
+## Terms:
+##                   Clarity Residuals
+## Sum of Squares  194938677 411866844
+## Deg. of Freedom         8       431
+## 
+## Residual standard error: 977.5518
+## Estimated effects may be unbalanced
+## 1 observation deleted due to missingness</code></pre>
+<p>The R2 is just 10.24% which shows low levels of correlation. However, the low p-score and high F-statistic suggests clarity is very significant in predicting price</p>
+<pre class="r"><code>Certification_Regression &lt;- lm(Price ~ Certification, data = df23)
+coef(Certification_Regression)</code></pre>
+<pre><code>##      (Intercept) CertificationDOW CertificationEGL CertificationGIA 
+##        3033.4167       -1002.4167        -355.5847        -212.5648</code></pre>
+<pre class="r"><code>summary(Certification_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Certification, data = df23)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -902.85 -263.85   34.38  263.40  467.17 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        3033.4      102.3  29.657  &lt; 2e-16 ***
+## CertificationDOW  -1002.4      368.8  -2.718  0.00705 ** 
+## CertificationEGL   -355.6      107.3  -3.313  0.00107 ** 
+## CertificationGIA   -212.6      107.8  -1.972  0.04983 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 354.3 on 236 degrees of freedom
+## Multiple R-squared:  0.08153,    Adjusted R-squared:  0.06986 
+## F-statistic: 6.983 on 3 and 236 DF,  p-value: 0.0001607</code></pre>
+<pre class="r"><code>aov(Certification_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Certification_Regression)
+## 
+## Terms:
+##                 Certification Residuals
+## Sum of Squares        2630097  29627467
+## Deg. of Freedom             3       236
+## 
+## Residual standard error: 354.3164
+## Estimated effects may be unbalanced</code></pre>
+<p>Certification has a R2 of just 8.15% as well as a comparitively low F-statistic. The p-scores are still &lt; .05 suggesting it is still significant</p>
+<pre class="r"><code>Cut_Regression &lt;- lm(Price ~ Cut, data = df23)
+coef(Cut_Regression)</code></pre>
+<pre><code>## (Intercept)        CutG        CutI        CutV        CutX 
+##   2559.8393    190.9254    331.6940    442.6792    179.6735</code></pre>
+<pre class="r"><code>summary(Cut_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Cut, data = df23)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -784.76 -250.84   47.48  269.99  578.16 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2559.84      45.81  55.883  &lt; 2e-16 ***
+## CutG          190.93      74.53   2.562  0.01104 *  
+## CutI          331.69      68.63   4.833 2.43e-06 ***
+## CutV          442.68      80.31   5.512 9.32e-08 ***
+## CutX          179.67      60.04   2.993  0.00306 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 342.8 on 235 degrees of freedom
+## Multiple R-squared:  0.144,  Adjusted R-squared:  0.1294 
+## F-statistic: 9.881 on 4 and 235 DF,  p-value: 2.094e-07</code></pre>
+<pre class="r"><code>aov(Cut_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Cut_Regression)
+## 
+## Terms:
+##                      Cut Residuals
+## Sum of Squares   4644015  27613549
+## Deg. of Freedom        4       235
+## 
+## Residual standard error: 342.7892
+## Estimated effects may be unbalanced</code></pre>
+<p>Cut has a R2 of 14.4%, which is one of the strongest correlations among the variables. The p scores are also in significant range</p>
+<pre class="r"><code>Polish_Regression &lt;- lm(Price ~ Polish, data = df23)
+coef(Polish_Regression)</code></pre>
+<pre><code>## (Intercept)     PolishG     PolishI     Polishv     PolishV     PolishX 
+##   2318.6000    325.1946    728.8000    762.4000    521.8375    683.6857</code></pre>
+<pre class="r"><code>summary(Polish_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Polish, data = df23)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -953.29 -242.03   47.46  266.81  501.21 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2318.6      153.0  15.150  &lt; 2e-16 ***
+## PolishG        325.2      156.4   2.079 0.038707 *  
+## PolishI        728.8      216.4   3.367 0.000887 ***
+## Polishv        762.4      374.9   2.034 0.043103 *  
+## PolishV        521.8      157.0   3.324 0.001029 ** 
+## PolishX        683.7      170.3   4.015 8.01e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 342.2 on 234 degrees of freedom
+## Multiple R-squared:  0.1505, Adjusted R-squared:  0.1323 
+## F-statistic: 8.291 on 5 and 234 DF,  p-value: 3.125e-07</code></pre>
+<pre class="r"><code>aov(Polish_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Polish_Regression)
+## 
+## Terms:
+##                   Polish Residuals
+## Sum of Squares   4854723  27402841
+## Deg. of Freedom        5       234
+## 
+## Residual standard error: 342.2078
+## Estimated effects may be unbalanced</code></pre>
+<p>Polish has a R2 of 15.05%, which is the strongest correlation among the variables. The F-statistic is 8.291 which is on the lower end but the p-scores still fall in significant range.</p>
+<pre class="r"><code>Symmetry_Regression &lt;- lm(Price ~ Symmetry, data = df23)
+coef(Symmetry_Regression)</code></pre>
+<pre><code>## (Intercept)   SymmetryG   SymmetryI   SymmetryV   SymmetryX 
+##   2432.2857    260.7912    615.1143    413.3929    502.8681</code></pre>
+<pre class="r"><code>summary(Symmetry_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Symmetry, data = df23)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -927.68 -249.08   79.35  289.32  692.71 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2432.29      74.93  32.459  &lt; 2e-16 ***
+## SymmetryG     260.79      82.15   3.174 0.001702 ** 
+## SymmetryI     615.11     170.88   3.600 0.000388 ***
+## SymmetryV     413.39      83.78   4.934 1.52e-06 ***
+## SymmetryX     502.87     100.75   4.991 1.17e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 343.4 on 235 degrees of freedom
+## Multiple R-squared:  0.1409, Adjusted R-squared:  0.1263 
+## F-statistic: 9.639 on 4 and 235 DF,  p-value: 3.104e-07</code></pre>
+<pre class="r"><code>aov(Symmetry_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Symmetry_Regression)
+## 
+## Terms:
+##                 Symmetry Residuals
+## Sum of Squares   4546605  27710959
+## Deg. of Freedom        4       235
+## 
+## Residual standard error: 343.3933
+## Estimated effects may be unbalanced</code></pre>
+<p>The R2 is 14.09%. The p-scores are all significant or very significant</p>
+<pre class="r"><code>Colour_Regression &lt;- lm(Price ~ Colour, data = df23)
+coef(Colour_Regression)</code></pre>
+<pre><code>## (Intercept)     ColourE     ColourF     ColourG     ColourH     ColourI 
+##   2952.9333   -124.5487   -239.6833   -140.4817   -198.1402   -174.8778 
+##     ColourJ     ColourK     ColourL 
+##   -146.3583   -322.3407   -584.4333</code></pre>
+<pre class="r"><code>summary(Colour_Regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Colour, data = df23)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -883.5 -299.1  134.2  297.4  506.4 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2952.93      91.56  32.250  &lt; 2e-16 ***
+## ColourE      -124.55     114.98  -1.083  0.27985    
+## ColourF      -239.68     116.72  -2.053  0.04116 *  
+## ColourG      -140.48     111.54  -1.259  0.20913    
+## ColourH      -198.14     112.79  -1.757  0.08028 .  
+## ColourI      -174.88     108.98  -1.605  0.10994    
+## ColourJ      -146.36     107.37  -1.363  0.17417    
+## ColourK      -322.34     114.20  -2.823  0.00518 ** 
+## ColourL      -584.43     137.35  -4.255 3.04e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 354.6 on 231 degrees of freedom
+## Multiple R-squared:  0.09941,    Adjusted R-squared:  0.06822 
+## F-statistic: 3.187 on 8 and 231 DF,  p-value: 0.001891</code></pre>
+<pre class="r"><code>aov(Colour_Regression)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Colour_Regression)
+## 
+## Terms:
+##                   Colour Residuals
+## Sum of Squares   3206603  29050961
+## Deg. of Freedom        8       231
+## 
+## Residual standard error: 354.629
+## Estimated effects may be unbalanced</code></pre>
+<p>The colors with significant p-values are the yellow colors, whereas the colorless ones don’t have a p &lt; 0.05 in general. The R2 is 9.9% showing very little correlation and the F-statistic is also comparitively much lower than the rest.</p>
+<pre class="r"><code>attach(df23)</code></pre>
+<pre><code>## The following object is masked _by_ .GlobalEnv:
+## 
+##     Certification</code></pre>
+<pre><code>## The following objects are masked from df:
+## 
+##     Carat, Certification, Clarity, Colour, Cut, Polish, Price,
+##     Symmetry, Wholesaler</code></pre>
+<div id="multiple-linear-regression-model" class="section level3">
+<h3>Multiple Linear Regression Model</h3>
+<pre class="r"><code>model &lt;- glm(Price ~ Carat + Colour + Symmetry + Clarity + Cut + Polish + Certification, data = df23)
+summary(model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Price ~ Carat + Colour + Symmetry + Clarity + Cut + 
+##     Polish + Certification, data = df23)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -432.53  -112.20   -10.69   110.74   551.95  
+## 
+## Coefficients: (1 not defined because of singularities)
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       526.711    229.387   2.296 0.022658 *  
+## Carat            2224.787    181.612  12.250  &lt; 2e-16 ***
+## ColourE          -131.893     61.774  -2.135 0.033916 *  
+## ColourF          -307.649     65.588  -4.691 4.92e-06 ***
+## ColourG          -239.704     62.446  -3.839 0.000164 ***
+## ColourH          -323.468     63.175  -5.120 6.91e-07 ***
+## ColourI          -390.309     63.052  -6.190 3.13e-09 ***
+## ColourJ          -505.430     63.955  -7.903 1.54e-13 ***
+## ColourK          -770.878     69.417 -11.105  &lt; 2e-16 ***
+## ColourL          -952.718     81.144 -11.741  &lt; 2e-16 ***
+## SymmetryG         105.981     55.588   1.907 0.057954 .  
+## SymmetryI         181.761    162.655   1.117 0.265079    
+## SymmetryV          99.699     61.592   1.619 0.107022    
+## SymmetryX          68.277     78.799   0.866 0.387223    
+## ClarityI2        -572.334     51.444 -11.125  &lt; 2e-16 ***
+## ClaritySI1        726.365     56.836  12.780  &lt; 2e-16 ***
+## ClaritySI2        603.265     41.579  14.509  &lt; 2e-16 ***
+## ClaritySI3        309.407     48.226   6.416 9.22e-10 ***
+## ClarityVS1        832.316     91.400   9.106  &lt; 2e-16 ***
+## ClarityVS2        820.050     89.870   9.125  &lt; 2e-16 ***
+## CutG               23.092     44.774   0.516 0.606584    
+## CutI               87.321     49.551   1.762 0.079489 .  
+## CutV               36.133     57.122   0.633 0.527708    
+## CutX              121.231     38.078   3.184 0.001676 ** 
+## PolishG            90.589    102.702   0.882 0.378758    
+## PolishI                NA         NA      NA       NA    
+## Polishv           144.093    223.363   0.645 0.519565    
+## PolishV           119.910    109.465   1.095 0.274597    
+## PolishX           122.537    119.582   1.025 0.306685    
+## CertificationDOW -315.747    215.317  -1.466 0.144035    
+## CertificationEGL -263.638     81.777  -3.224 0.001468 ** 
+## CertificationGIA    6.291     79.285   0.079 0.936836    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for gaussian family taken to be 34959.54)
+## 
+##     Null deviance: 32257564  on 239  degrees of freedom
+## Residual deviance:  7306544  on 209  degrees of freedom
+## AIC: 3222.8
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+<div id="plugging-in-the-values-to-the-model526.71-2224.79.9---505.43-99.70-603.27-36.13-90.59-6.29-you-get-the-price-for-the-diamond-is-2859.29-with-a-95-confidence-interval-of-2042.35-to-3676.23.-overall-this-is-slightly-lower-than-his-expected-price-of-3100-however-this-doesnt-account-for-the-entire-ring-just-the-diamond.-the-largest-determinants-of-price-was-the-carat-size-and-clarity-of-the-diamond." class="section level3">
+<h3>Plugging in the values to the model(526.71 + 2224.79(.9) - 505.43 + 99.70 + 603.27 +36.13 + 90.59 + 6.29) you get the price for the diamond is $2859.29 with a 95% confidence interval of $2042.35 to $3676.23. Overall this is slightly lower than his expected price of $3100, however this doesn’t account for the entire ring, just the diamond. The largest determinants of price was the Carat size and Clarity of the diamond.</h3>
+</div>
 </div>
 </div>

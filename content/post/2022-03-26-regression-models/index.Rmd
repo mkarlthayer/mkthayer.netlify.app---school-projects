@@ -6,7 +6,7 @@ slug: regression-models
 categories: []
 tags: []
 ---
-## The model predicts the price to be $2844.49 which makes the price of $3100 slightly high, but not a rip off (work below)
+## The model predicts the price of the diamond as $2859.29 with a 95% confidence interval of $2042.35 to $3676.23. Overall this is slightly lower than his expected price of $3100, however this doesn't account for the entire ring, just the diamond. (work below)
 
 #Call Libraries
 ```{r}
@@ -31,6 +31,19 @@ train <- sample(440,220)
 head(train)
 ```
 
+```{r}
+attach(df)
+#attach data frame
+```
+
+```{r, echo = FALSE, message=FALSE,results='hide'}
+as.factor(Certification)
+as.factor(Colour)
+as.factor(Cut)
+as.factor(Clarity)
+as.factor(Polish)
+as.factor(Symmetry)
+```
 
 # Exploratory Data Analysis
 ```{r}
@@ -40,74 +53,54 @@ df %>%
 df %>%
   ggplot(aes(Carat)) +
   geom_histogram()
-summary(Price) 
+
 ```
 Both Price And Carats have a bimodal distributions with a low and high price cluster and a small and large carat cluster
 
-```{r}
-attach(df)
-#attach data frame
-```
+
 
 ```{r}
 table(Certification)
 
 # Split into established and small labs
-df[Certification == "GIA", "Certification"] <- "GIA/AGS"
-df[Certification == "AGS", "Certification"] <- "GIA/AGS"
-df[Certification == "DOW", "Certification"] <- "Rest"
-df[Certification == "IGI", "Certification"] <- "Rest"
-df[Certification == "EGL", "Certification"] <- "Rest"
+levels(Certification)
+levels(Certification) <- list("GIA/AGS" = c("GIA","AGS"),
+                              "Rest" = c("DOW", "IGI","EGL"))
 
 table(df$Certification)
 ```
 ```{r}
 table(Colour)
-
-df[Colour == "D", "Colour"] <- "Colorless/Near Colorless"
-df[Colour == "F", "Colour"] <- "Colorless/Near Colorless"
-df[Colour == "E", "Colour"] <- "Colorless/Near Colorless"
-df[Colour == "G", "Colour"] <- "Colorless/Near Colorless"
-df[Colour == "H", "Colour"] <- "Colorless/Near Colorless"
-df[Colour == "I", "Colour"] <- "Colorless/Near Colorless"
-df[Colour == "J", "Colour"] <- "Faint to Very Light Yellow"
-df[Colour == "K", "Colour"] <- "Faint to Very Light Yellow"
-df[Colour == "L", "Colour"] <- "Faint to Very Light Yellow"
+levels(Colour) <- list("Colorless" = c("D","F","E","G","H","I"),
+                              "Yellow" = c("J", "K","L"))
 
 table(df$Colour)
 ```
 ```{r}
 table(Cut)
 # Even representation of data
+levels(Cut) <- list("Fair" = "F",
+                              "Good" = "G",
+                              "Ideal" = "I",
+                              "Very Good" = "V",
+                              "Excellent" = "X")
+levels(Cut)
 ```
 ```{r}
 table(Clarity)
-
-#Interval scaling
-df[Clarity == "I1", "Clarity"] <- "1"
-df[Clarity == "I2", "Clarity"] <- "2"
-df[Clarity == "SI1", "Clarity"] <- "3"
-df[Clarity == "SI2", "Clarity"] <- "4"
-df[Clarity == "SI3", "Clarity"] <- "5"
-df[Clarity == "VS1", "Clarity"] <- "6"
-df[Clarity == "VS2", "Clarity"] <- "7"
-df[Clarity == "VVS1", "Clarity"] <- "8"
-df[Clarity == "VVS2", "Clarity"] <- "9"
-df$Clarity <- as.numeric(df$Clarity)
-table(df$Clarity)
 ```
 ```{r}
 table(Polish)
-df[Polish == "F", "Polish"] <- "Fair to Good"
-df[Polish == "G", "Polish"] <- "Fair to Good"
-df[Polish == "v", "Polish"] <- "Very Good to Ideal"
-df[Polish == "V", "Polish"] <- "Very Good to Ideal"
-df[Polish == "I", "Polish"] <- "Very Good to Ideal"
-df[Polish == "X", "Polish"] <- "Very Good to Ideal"
-table(df$Polish)
+levels(Cut) <- list("Fair to Good" = c("F", "G"),
+                    "Very Good to Ideal" = c("I","V", "X"))
 ```
 ```{r}
 table(Symmetry)
+levels(Symmetry) <- list("Fair" = "F",
+                              "Good" = "G",
+                              "Ideal" = "I",
+                              "Very Good" = "V",
+                              "Excellent" = "X")
 ```
 ## Bivariate Analysis
 
