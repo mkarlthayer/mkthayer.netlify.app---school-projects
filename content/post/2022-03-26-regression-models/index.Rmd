@@ -9,14 +9,16 @@ tags: []
 ## Goal
 Using the provided data set of diamond features and prices from wholesalers, the goal is to create an effective model to give the professor a price on a diamond with his desired qualities
 
-#Call Libraries
+# Call Libraries
+
 ```{r}
 library(tidyverse)
 library(ISLR)
 library(boot)
 ```
 
-#Get Data and transform as necessary (make Wholesaler a factor)
+# Get Data and transform as necessary (make Wholesaler a factor)
+
 ```{r}
 df <- read_csv("https://raw.githubusercontent.com/thayerm/mkthayer/main/content/post/2022-03-26-regression-models/data/Professor_Proposes_Data.csv")
 df$Wholesaler <- as.factor(df$Wholesaler)
@@ -47,6 +49,7 @@ as.factor(Symmetry)
 ```
 
 # Exploratory Data Analysis
+
 ```{r}
 df %>%
   ggplot(aes(Price)) +
