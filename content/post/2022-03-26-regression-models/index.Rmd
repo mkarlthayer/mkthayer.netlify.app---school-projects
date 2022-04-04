@@ -115,8 +115,9 @@ df1 <- df %>%
   filter(Wholesaler == 3)
 
 max(df1$Carat)
-#The largest Carat used by the the third Wholesaler is just 0.3, since the professor wants a 0.9 Carat diamond, its better to focus on data from the 1st and 2nd wholesaler wehere he will have to buy from
+
 ```
+The largest Carat used by the the third Wholesaler is just 0.3, since the professor wants a 0.9 Carat diamond, its better to focus on data from the 1st and 2nd wholesaler wehere he will have to buy from
 ```{r}
 df23 <- df %>%
   filter(Wholesaler == 2 | Wholesaler == 1)
@@ -129,7 +130,7 @@ df23 %>%
   geom_point()
 ```
 
-We can model both the data sets discovered in the bivariate analysis
+
 
 ## Regression
 ```{r}

@@ -9,8 +9,9 @@ tags: []
 
 
 
-<div id="the-model-predicts-the-price-of-the-diamond-as-2859.29-with-a-95-confidence-interval-of-2042.35-to-3676.23.-overall-this-is-slightly-lower-than-his-expected-price-of-3100-however-this-doesnt-account-for-the-entire-ring-just-the-diamond.-work-below" class="section level2">
-<h2>The model predicts the price of the diamond as $2859.29 with a 95% confidence interval of $2042.35 to $3676.23. Overall this is slightly lower than his expected price of $3100, however this doesn’t account for the entire ring, just the diamond. (work below)</h2>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>Using the provided data set of diamond features and prices from wholesalers, the goal is to create an effective model to give the professor a price on a diamond with his desired qualities</p>
 <p>#Call Libraries</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.1.3</code></pre>
@@ -64,6 +65,12 @@ head(train)</code></pre>
 <pre><code>## [1] 324 167 129 418 299 270</code></pre>
 <pre class="r"><code>attach(df)
 #attach data frame</code></pre>
+<pre class="r"><code>as.factor(Certification)
+as.factor(Colour)
+as.factor(Cut)
+as.factor(Clarity)
+as.factor(Polish)
+as.factor(Symmetry)</code></pre>
 </div>
 <div id="exploratory-data-analysis" class="section level1">
 <h1>Exploratory Data Analysis</h1>
@@ -161,7 +168,7 @@ levels(Cut)</code></pre>
 
 max(df1$Carat)</code></pre>
 <pre><code>## [1] 0.3</code></pre>
-<pre class="r"><code>#The largest Carat used by the the third Wholesaler is just 0.3, since the professor wants a 0.9 Carat diamond, its better to focus on data from the 1st and 2nd wholesaler wehere he will have to buy from</code></pre>
+<p>The largest Carat used by the the third Wholesaler is just 0.3, since the professor wants a 0.9 Carat diamond, its better to focus on data from the 1st and 2nd wholesaler wehere he will have to buy from</p>
 <pre class="r"><code>df23 &lt;- df %&gt;%
   filter(Wholesaler == 2 | Wholesaler == 1)
 # Data set only looking at the 1st and second wholesaler
@@ -172,7 +179,6 @@ dim(df23)</code></pre>
   ggplot(aes(x=Carat,y=Price, color=Wholesaler)) +
   geom_point()</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<p>We can model both the data sets discovered in the bivariate analysis</p>
 </div>
 <div id="regression" class="section level2">
 <h2>Regression</h2>
