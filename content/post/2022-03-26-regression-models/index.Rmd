@@ -31,10 +31,7 @@ dim(df)
 train <- sample(440,220)
 head(train)
 ```
-```{r}
-attach(df)
-#attach data frame
-```
+
 
 # Exploratory Data Analysis
 ```{r}
@@ -46,7 +43,7 @@ df %>%
   geom_histogram()
 summary(Price) 
 ```
-Both Price And Carats have a bimodal distribution that can be explained by the Wholesaler
+Both Price And Carats have a bimodal distributions that can be explained by the Wholesaler
 ```{r}
 df %>%
   ggplot(aes(x=Carat,y=Price, color=Wholesaler)) +
@@ -71,10 +68,69 @@ df23 %>%
   geom_point()
 ```
 ```{r}
-df23 %>%
-  ggplot(aes(x=Symmetry,y=Price, shape=Certification, color=Polish)) +
-  geom_point() 
-# We see the highest rated symmetry and polish lead to higher prices, this data makes sense intuitively
+attach(df)
+#attach data frame
+```
+
+```{r}
+table(Certification)
+
+# Split into established and small labs
+df[Certification == "GIA", "Certification"] <- "GIA/AGS"
+df[Certification == "AGS", "Certification"] <- "GIA/AGS"
+df[Certification == "DOW", "Certification"] <- "Rest"
+df[Certification == "IGI", "Certification"] <- "Rest"
+df[Certification == "EGL", "Certification"] <- "Rest"
+
+table(df$Certification)
+```
+```{r}
+table(Colour)
+
+df[Colour == "D", "Colour"] <- "Colorless/Near Colorless"
+df[Colour == "F", "Colour"] <- "Colorless/Near Colorless"
+df[Colour == "E", "Colour"] <- "Colorless/Near Colorless"
+df[Colour == "G", "Colour"] <- "Colorless/Near Colorless"
+df[Colour == "H", "Colour"] <- "Colorless/Near Colorless"
+df[Colour == "I", "Colour"] <- "Colorless/Near Colorless"
+df[Colour == "J", "Colour"] <- "Faint to Very Light Yellow"
+df[Colour == "K", "Colour"] <- "Faint to Very Light Yellow"
+df[Colour == "L", "Colour"] <- "Faint to Very Light Yellow"
+
+table(df$Colour)
+```
+```{r}
+table(Cut)
+# Even representation of data
+```
+```{r}
+table(Clarity)
+
+#Interval scaling
+df[Clarity == "I1", "Clarity"] <- "1"
+df[Clarity == "I2", "Clarity"] <- "2"
+df[Clarity == "SI1", "Clarity"] <- "3"
+df[Clarity == "SI2", "Clarity"] <- "4"
+df[Clarity == "SI3", "Clarity"] <- "5"
+df[Clarity == "VS1", "Clarity"] <- "6"
+df[Clarity == "VS2", "Clarity"] <- "7"
+df[Clarity == "VVS1", "Clarity"] <- "8"
+df[Clarity == "VVS2", "Clarity"] <- "9"
+df$Clarity <- as.numeric(df$Clarity)
+table(df$Clarity)
+```
+```{r}
+table(Polish)
+df[Polish == "F", "Polish"] <- "Fair to Good"
+df[Polish == "G", "Polish"] <- "Fair to Good"
+df[Polish == "v", "Polish"] <- "Very Good to Ideal"
+df[Polish == "V", "Polish"] <- "Very Good to Ideal"
+df[Polish == "I", "Polish"] <- "Very Good to Ideal"
+df[Polish == "X", "Polish"] <- "Very Good to Ideal"
+table(df$Polish)
+```
+```{r}
+table(Symmetry)
 ```
 
 
@@ -87,12 +143,21 @@ df23 %>%
 ```{r}
 ## Boot function
 boot.fn <- function(data, index) {
-  return(coef(lm(Price~Carat+Colour+Clarity+Cut+Certification+Polish+Symmetry, data=data, subset=index)))
+  return(coef(lm(Price~Carat, data=data, subset=index)))
 }
 ```
 ```{r}
 set.seed(1)
 boot.fn(df23, sample(240,240,replace=T))
+```
+
+```{r}
+model <- glm(Price ~ Carat + Colour + Symmetry + Clarity + Cut + Polish + Certification)
+summary(model)
+```
+```{r}
+model <- glm(Price ~ Carat + Colour + Clarity )
+summary(model)
 ```
 
 
