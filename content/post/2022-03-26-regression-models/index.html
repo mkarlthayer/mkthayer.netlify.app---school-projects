@@ -9,8 +9,8 @@ tags: []
 
 
 
-<div id="the-model-predicts-the-price-to-be-2844.49-which-makes-the-price-of-3100-slightly-high-but-not-a-rip-off-work-below" class="section level2">
-<h2>The model predicts the price to be $2844.49 which makes the price of $3100 slightly high, but not a rip off (work below)</h2>
+<div id="the-model-predicts-the-price-of-the-diamond-as-2859.29-with-a-95-confidence-interval-of-2042.35-to-3676.23.-overall-this-is-slightly-lower-than-his-expected-price-of-3100-however-this-doesnt-account-for-the-entire-ring-just-the-diamond.-work-below" class="section level2">
+<h2>The model predicts the price of the diamond as $2859.29 with a 95% confidence interval of $2042.35 to $3676.23. Overall this is slightly lower than his expected price of $3100, however this doesn’t account for the entire ring, just the diamond. (work below)</h2>
 <p>#Call Libraries</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.1.3</code></pre>
@@ -85,7 +85,9 @@ Both Price And Carats have a bimodal distributions with a low and high price clu
 ## AGS DOW EGL GIA IGI 
 ##  12   1 119 265  43</code></pre>
 <pre class="r"><code># Split into established and small labs
-levels(Certification) &lt;- list(&quot;GIA/AGS&quot; = c(&quot;GIA&quot;,&quot;AGS&quot;),
+levels(Certification)</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>levels(Certification) &lt;- list(&quot;GIA/AGS&quot; = c(&quot;GIA&quot;,&quot;AGS&quot;),
                               &quot;Rest&quot; = c(&quot;DOW&quot;, &quot;IGI&quot;,&quot;EGL&quot;))
 
 table(df$Certification)</code></pre>
@@ -96,7 +98,7 @@ table(df$Certification)</code></pre>
 <pre><code>## Colour
 ##  D  E  F  G  H  I  J  K  L 
 ## 20 54 58 43 71 79 72 31 12</code></pre>
-<pre class="r"><code>levels(Certification) &lt;- list(&quot;Colorless&quot; = c(&quot;D&quot;,&quot;F&quot;,&quot;E&quot;,&quot;G&quot;,&quot;H&quot;,&quot;I&quot;),
+<pre class="r"><code>levels(Colour) &lt;- list(&quot;Colorless&quot; = c(&quot;D&quot;,&quot;F&quot;,&quot;E&quot;,&quot;G&quot;,&quot;H&quot;,&quot;I&quot;),
                               &quot;Yellow&quot; = c(&quot;J&quot;, &quot;K&quot;,&quot;L&quot;))
 
 table(df$Colour)</code></pre>
@@ -107,44 +109,46 @@ table(df$Colour)</code></pre>
 <pre><code>## Cut
 ##   F   G   I   V   X 
 ##  59  49  86  97 149</code></pre>
-<pre class="r"><code># Even representation of data</code></pre>
+<pre class="r"><code># Even representation of data
+levels(Cut) &lt;- list(&quot;Fair&quot; = &quot;F&quot;,
+                              &quot;Good&quot; = &quot;G&quot;,
+                              &quot;Ideal&quot; = &quot;I&quot;,
+                              &quot;Very Good&quot; = &quot;V&quot;,
+                              &quot;Excellent&quot; = &quot;X&quot;)
+levels(Cut)</code></pre>
+<pre><code>## $Fair
+## [1] &quot;F&quot;
+## 
+## $Good
+## [1] &quot;G&quot;
+## 
+## $Ideal
+## [1] &quot;I&quot;
+## 
+## $`Very Good`
+## [1] &quot;V&quot;
+## 
+## $Excellent
+## [1] &quot;X&quot;</code></pre>
 <pre class="r"><code>table(Clarity)</code></pre>
 <pre><code>## Clarity
-##   I1   I2  SI1  SI2  SI3  VS1  VS2 VVS1 VVS2 
-##   82   28  116  110   26   30   41    2    5</code></pre>
-<pre class="r"><code>#Interval scaling
-# df[Clarity == &quot;I1&quot;, &quot;Clarity&quot;] &lt;- &quot;1&quot;
-# df[Clarity == &quot;I2&quot;, &quot;Clarity&quot;] &lt;- &quot;2&quot;
-# df[Clarity == &quot;SI1&quot;, &quot;Clarity&quot;] &lt;- &quot;3&quot;
-# df[Clarity == &quot;SI2&quot;, &quot;Clarity&quot;] &lt;- &quot;4&quot;
-# df[Clarity == &quot;SI3&quot;, &quot;Clarity&quot;] &lt;- &quot;5&quot;
-# df[Clarity == &quot;VS1&quot;, &quot;Clarity&quot;] &lt;- &quot;6&quot;
-# df[Clarity == &quot;VS2&quot;, &quot;Clarity&quot;] &lt;- &quot;7&quot;
-# df[Clarity == &quot;VVS1&quot;, &quot;Clarity&quot;] &lt;- &quot;8&quot;
-# df[Clarity == &quot;VVS2&quot;, &quot;Clarity&quot;] &lt;- &quot;9&quot;
-#df$Clarity &lt;- as.numeric(df$Clarity)
-table(df$Clarity)</code></pre>
-<pre><code>## 
 ##   I1   I2  SI1  SI2  SI3  VS1  VS2 VVS1 VVS2 
 ##   82   28  116  110   26   30   41    2    5</code></pre>
 <pre class="r"><code>table(Polish)</code></pre>
 <pre><code>## Polish
 ##   F   G   I   v   V   X 
 ##   5 165   5   1 203  61</code></pre>
-<pre class="r"><code># df[Polish == &quot;F&quot;, &quot;Polish&quot;] &lt;- &quot;Fair to Good&quot;
-# df[Polish == &quot;G&quot;, &quot;Polish&quot;] &lt;- &quot;Fair to Good&quot;
-# df[Polish == &quot;v&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
-# df[Polish == &quot;V&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
-# df[Polish == &quot;I&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
-# df[Polish == &quot;X&quot;, &quot;Polish&quot;] &lt;- &quot;Very Good to Ideal&quot;
-table(df$Polish)</code></pre>
-<pre><code>## 
-##   F   G   I   v   V   X 
-##   5 165   5   1 203  61</code></pre>
+<pre class="r"><code>levels(Cut) &lt;- list(&quot;Fair to Good&quot; = c(&quot;F&quot;, &quot;G&quot;),
+                    &quot;Very Good to Ideal&quot; = c(&quot;I&quot;,&quot;V&quot;, &quot;X&quot;))</code></pre>
 <pre class="r"><code>table(Symmetry)</code></pre>
 <pre><code>## Symmetry
 ##   F   G   I   V   X 
 ##  21 157   5 206  51</code></pre>
+<pre class="r"><code>levels(Symmetry) &lt;- list(&quot;Fair&quot; = &quot;F&quot;,
+                              &quot;Good&quot; = &quot;G&quot;,
+                              &quot;Ideal&quot; = &quot;I&quot;,
+                              &quot;Very Good&quot; = &quot;V&quot;,
+                              &quot;Excellent&quot; = &quot;X&quot;)</code></pre>
 <div id="bivariate-analysis" class="section level2">
 <h2>Bivariate Analysis</h2>
 <pre class="r"><code>df %&gt;%
@@ -450,9 +454,9 @@ coef(Colour_Regression)</code></pre>
 ## Estimated effects may be unbalanced</code></pre>
 <p>The colors with significant p-values are the yellow colors, whereas the colorless ones don’t have a p &lt; 0.05 in general. The R2 is 9.9% showing very little correlation and the F-statistic is also comparitively much lower than the rest.</p>
 <pre class="r"><code>attach(df23)</code></pre>
-<pre><code>## The following object is masked _by_ .GlobalEnv:
+<pre><code>## The following objects are masked _by_ .GlobalEnv:
 ## 
-##     Certification</code></pre>
+##     Certification, Colour, Cut, Symmetry</code></pre>
 <pre><code>## The following objects are masked from df:
 ## 
 ##     Carat, Certification, Clarity, Colour, Cut, Polish, Price,
