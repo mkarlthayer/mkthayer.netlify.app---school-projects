@@ -6,7 +6,8 @@ slug: regression-models
 categories: []
 tags: []
 ---
-## The model predicts the price of the diamond as $2859.29 with a 95% confidence interval of $2042.35 to $3676.23. Overall this is slightly lower than his expected price of $3100, however this doesn't account for the entire ring, just the diamond. (work below)
+## Goal
+Using the provided data set of diamond features and prices from wholesalers, the goal is to create an effective model to give the professor a price on a diamond with his desired qualities
 
 #Call Libraries
 ```{r}
@@ -36,7 +37,7 @@ attach(df)
 #attach data frame
 ```
 
-```{r, echo = FALSE, message=FALSE,results='hide'}
+```{r, message=FALSE,results='hide'}
 as.factor(Certification)
 as.factor(Colour)
 as.factor(Cut)
