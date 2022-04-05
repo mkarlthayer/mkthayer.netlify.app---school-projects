@@ -53,10 +53,14 @@ as.factor(Symmetry)
 ```{r}
 df %>%
   ggplot(aes(Price)) +
-  geom_histogram()
+  geom_histogram()+
+  theme_bw()
+summary(Price)
 df %>%
   ggplot(aes(Carat)) +
-  geom_histogram()
+  geom_histogram()+
+  theme_bw()
+summary(Carat)
 
 ```
 Both Price And Carats have a bimodal distributions with a low and high price cluster and a small and large carat cluster
