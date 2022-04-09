@@ -80,17 +80,25 @@ as.factor(Symmetry)</code></pre>
 <h1>Exploratory Data Analysis</h1>
 <pre class="r"><code>df %&gt;%
   ggplot(aes(Price)) +
-  geom_histogram()</code></pre>
+  geom_histogram()+
+  theme_bw()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>summary(Price)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##     160     520    2169    1717    3012    3145       1</code></pre>
 <pre class="r"><code>df %&gt;%
   ggplot(aes(Carat)) +
-  geom_histogram()</code></pre>
+  geom_histogram()+
+  theme_bw()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-2.png" width="672" />
-Both Price And Carats have a bimodal distributions with a low and high price cluster and a small and large carat cluster</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>summary(Carat)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  0.0900  0.3000  0.8100  0.6693  1.0100  1.5800       1</code></pre>
+<p>Both Price And Carats have a bimodal distributions with a low and high price cluster and a small and large carat cluster</p>
 <pre class="r"><code>table(Certification)</code></pre>
 <pre><code>## Certification
 ## AGS DOW EGL GIA IGI 
