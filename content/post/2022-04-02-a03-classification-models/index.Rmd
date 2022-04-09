@@ -116,12 +116,29 @@ train %>%
   geom_bar(position = "fill")
 ```
 All these variables show trends and should impact accuracy of model
+# Logistic Regression Model
 ```{r}
-survived_fit <- logistic_reg() %>%
-  set_engine("glm") %>%
-  fit(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data = train, family = "binomial")
-tidy(survived_fit)
+model <- glm(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data = train, family = "binomial")
+survived_probabilities <- model %>% predict(test, type="response")
+predict_survival <- ifelse(survived_probabilities>0.5,1,0)
+PassengerId <- test$PassengerId
+df <- as.data.frame(PassengerId)
+df$Survived <- predict_survival
+
+
 ```
+## Survival prediction
+```{r}
+df
+table(predict_survival)
+```
+```{r}
+df %>% ggplot(aes(PassengerId,Survived)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
 
 ## Random Forest Model to Predict Survivors
 ```{r}
