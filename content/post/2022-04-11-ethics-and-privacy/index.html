@@ -31,11 +31,9 @@ tags: []
 </div>
 <div id="part-1" class="section level2">
 <h2>Part 1</h2>
-<div class="figure">
-<img src="https://raw.githubusercontent.com/thayerm/mkthayer/main/graph.png" alt="" />
-<p class="caption">Orignal Graph</p>
-</div>
-<pre class="r"><code>cases &lt;- tribble(~Date, ~Mask, ~NoMask,
+<p><img src="https://raw.githubusercontent.com/thayerm/mkthayer/main/graph.png" alt="Orignal Graph" />
+This graph makes it appear as if the mask counties have an equal amount or fewer cases than non mask counties, where in reality they used two axes with the Mask axis going from 15 to 28 and the No Mask axis going from 4 to 14. This clearly distorts the reality of the data as both lines should have been graphed on the same axis to fairly compare them.</p>
+<pre class="r"><code>cases &lt;- tribble(~Date, ~Mask, ~No_Mask,
                        &quot;2020-07-12&quot;,    26, 10,
                        &quot;2020-07-13&quot;, 19.7, 9,
                        &quot;2020-07-14&quot;, 19.7, 9.5,
@@ -65,23 +63,23 @@ tags: []
                        )
 cases</code></pre>
 <pre><code>## # A tibble: 23 x 3
-##    Date        Mask NoMask
-##    &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;
-##  1 2020-07-12  26     10  
-##  2 2020-07-13  19.7    9  
-##  3 2020-07-14  19.7    9.5
-##  4 2020-07-15  20      9.8
-##  5 2020-07-16  20.5   10  
-##  6 2020-07-17  19.7    9.8
-##  7 2020-07-18  20      9.2
-##  8 2020-07-19  20.5    9  
-##  9 2020-07-20  20.2    8.6
-## 10 2020-07-21  21      8.6
+##    Date        Mask No_Mask
+##    &lt;date&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1 2020-07-12  26      10  
+##  2 2020-07-13  19.7     9  
+##  3 2020-07-14  19.7     9.5
+##  4 2020-07-15  20       9.8
+##  5 2020-07-16  20.5    10  
+##  6 2020-07-17  19.7     9.8
+##  7 2020-07-18  20       9.2
+##  8 2020-07-19  20.5     9  
+##  9 2020-07-20  20.2     8.6
+## 10 2020-07-21  21       8.6
 ## # ... with 13 more rows</code></pre>
 <pre class="r"><code>cases %&gt;%
   ggplot(aes(x=Date))+
   geom_line(aes(y=Mask, color = &quot;orange&quot;)) +
-  geom_line(aes(y=NoMask, color = &quot;lightblue&quot;)) +
+  geom_line(aes(y=No_Mask, color = &quot;lightblue&quot;)) +
   theme_bw() +
   labs(title = &quot;Kansas COVID-19 7-day Rolling Average of Cases/Per 100k Population\n&quot;, color = &quot;Legend Title\n&quot;) +
   scale_color_manual(labels = c(&quot;No Mask&quot;, &quot;Mask&quot;), values = c(&quot;blue&quot;, &quot;orange&quot;)) +
@@ -89,7 +87,7 @@ cases</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 What message is more clear in your visualization than it was in the original visualization?</p>
 <ul>
-<li>Mask mandate counties had a higher 7-day rolling average of cases/per 100k than no-mask mandate counties in Kansas over the given time span</li>
+<li>Mask mandate counties had a higher 7-day rolling average of cases/per 100k than no-mask mandate counties in Kansas over the entirety of given time span</li>
 </ul>
 <p>What useful information do these data and your visualization tell us about mask wearing and COVID?</p>
 <ul>
@@ -104,6 +102,6 @@ What message is more clear in your visualization than it was in the original vis
 <h2>Part 3</h2>
 <div class="figure">
 <img src="https://raw.githubusercontent.com/thayerm/mkthayer/main/55fe8bcb56704f869e6957f4fd457ba2-0001.jpg" alt="" />
-<p class="caption">Graph</p>
+<p class="caption">Certification</p>
 </div>
 </div>

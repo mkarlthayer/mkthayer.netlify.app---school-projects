@@ -13,9 +13,10 @@ library(tidyverse)
 ## Part 1
 
 ![Orignal Graph](https://raw.githubusercontent.com/thayerm/mkthayer/main/graph.png)
+This graph makes it appear as if the mask counties have an equal amount or fewer cases than non mask counties, where in reality they used two axes with the Mask axis going from 15 to 28 and the No Mask axis going from 4 to 14. This clearly distorts the reality of the data as both lines should have been graphed on the same axis to fairly compare them.
 
 ```{r}
-cases <- tribble(~Date, ~Mask, ~NoMask,
+cases <- tribble(~Date, ~Mask, ~No_Mask,
                        "2020-07-12",    26, 10,
                        "2020-07-13", 19.7, 9,
                        "2020-07-14", 19.7, 9.5,
@@ -49,7 +50,7 @@ cases
 cases %>%
   ggplot(aes(x=Date))+
   geom_line(aes(y=Mask, color = "orange")) +
-  geom_line(aes(y=NoMask, color = "lightblue")) +
+  geom_line(aes(y=No_Mask, color = "lightblue")) +
   theme_bw() +
   labs(title = "Kansas COVID-19 7-day Rolling Average of Cases/Per 100k Population\n", color = "Legend Title\n") +
   scale_color_manual(labels = c("No Mask", "Mask"), values = c("blue", "orange")) +
