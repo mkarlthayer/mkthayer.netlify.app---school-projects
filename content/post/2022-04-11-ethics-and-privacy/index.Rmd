@@ -53,7 +53,7 @@ cases %>%
   geom_line(aes(y=Mask, color = "orange")) +
   geom_line(aes(y=No_Mask, color = "lightblue")) +
   theme_bw() +
-  labs(title = "Kansas COVID-19 7-day Rolling Average of Cases/Per 100k Population\n", color = "Legend Title\n") +
+  labs(title = "Kansas COVID-19 7-day Rolling Average of Cases/Per 100k Population\n", color = "Legend\n") +
   scale_color_manual(labels = c("No Mask", "Mask"), values = c("blue", "orange")) +
   ylim(0,27)
   

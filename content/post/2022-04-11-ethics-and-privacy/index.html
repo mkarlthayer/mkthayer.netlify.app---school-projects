@@ -76,7 +76,8 @@ cases</code></pre>
 ##  9 2020-07-20  20.2     8.6
 ## 10 2020-07-21  21       8.6
 ## # ... with 13 more rows</code></pre>
-<pre class="r"><code>cases %&gt;%
+<pre class="r"><code># Graph of more accurate representation of the data
+cases %&gt;%
   ggplot(aes(x=Date))+
   geom_line(aes(y=Mask, color = &quot;orange&quot;)) +
   geom_line(aes(y=No_Mask, color = &quot;lightblue&quot;)) +
