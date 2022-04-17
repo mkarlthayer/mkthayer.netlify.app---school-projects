@@ -1,0 +1,70 @@
+---
+title: Ethics and Privacy
+author: ''
+date: '2022-04-11'
+slug: ethics-and-privacy
+categories: []
+tags: []
+---
+### Get packages
+```{r}
+library(tidyverse)
+```
+## Part 1
+
+![Orignal Graph](https://raw.githubusercontent.com/thayerm/mkthayer/main/graph.png)
+
+```{r}
+cases <- tribble(~Date, ~Mask, ~NoMask,
+                       "2020-07-12",    26, 10,
+                       "2020-07-13", 19.7, 9,
+                       "2020-07-14", 19.7, 9.5,
+                       "2020-07-15", 20, 9.8,
+                       "2020-07-16", 20.5, 10,
+                       "2020-07-17", 19.7, 9.8,
+                       "2020-07-18", 20, 9.2,
+                       "2020-07-19", 20.5, 9,
+                       "2020-07-20", 20.2, 8.6,
+                       "2020-07-21", 21, 8.6, 
+                       "2020-07-22", 20.7, 8.7, 
+                       "2020-07-23", 19.8, 8.8,
+                       "2020-07-24", 20.1, 9.2, 
+                       "2020-07-25", 19, 9.8,
+                       "2020-07-26", 19.6, 10,
+                       "2020-07-27", 18.3, 9.8,
+                       "2020-07-28", 16.7, 9.4,
+                       "2020-07-29", 16.5, 9.5,
+                       "2020-07-30", 16.7, 9.9,
+                       "2020-07-31", 16.3, 9.2,
+                       "2020-08-01", 16, 8.7,
+                       "2020-08-02", 15.9, 8.7,
+                       "2020-08-03", 15.7, 8.8,
+                       ) %>%
+                mutate(
+                      across(Date, as.Date)
+                       )
+cases
+```
+```{r}
+cases %>%
+  ggplot(aes(x=Date))+
+  geom_line(aes(y=Mask, color = "orange")) +
+  geom_line(aes(y=NoMask, color = "lightblue")) +
+  theme_bw() +
+  labs(title = "Kansas COVID-19 7-day Rolling Average of Cases/Per 100k Population\n", color = "Legend Title\n") +
+  scale_color_manual(labels = c("No Mask", "Mask"), values = c("blue", "orange")) +
+  ylim(0,27)
+  
+```
+What message is more clear in your visualization than it was in the original visualization?
+- Mask mandate counties had a higher 7-day rolling average of cases/per 100k than no-mask mandate counties in Kansas over the given time span
+What useful information do these data and your visualization tell us about mask wearing and COVID?
+- Mask wearing alone doesn't prevent the spread of COVID
+
+## Part 2
+In the Cambridge Analytica video, the whistleblower, Christopher, discusses how he joined a company that specializes in influencing elections, working under Alexander Nix. This company later became Cambridge Analytica, using a name that would cause a false sense of prestige and association with Cambridge University. Using this, they managed to receive a $15 million investment from Robert Mercer to build personality profiles of US citizens and voters. To create these profiles, they harvested data not only from individual facebook users but also their entire network of friends without their knowledge or consent. Using that data to create the personality profiles allowed Cambridge Analytica to create personalized, targeted campaigns to sway voters to one side. Hearing Christopher’s story was very interesting particularly because it’s easy to forget about the ways data science can be used for unethical purposes, even as he was working on the assignment he didn’t realize the invasion of privacy that occurred while collecting data until much later. Even though Cambridge Analytica and Facebook denied all claims of invasion of privacy, it is clear that this is something that is very possible and something that one needs to be conscious of both while collecting data and sharing things online.
+
+
+
+## Part 3
+![Graph](https://raw.githubusercontent.com/thayerm/mkthayer/main/55fe8bcb56704f869e6957f4fd457ba2-0001.jpg)
