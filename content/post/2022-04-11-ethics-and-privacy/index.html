@@ -9,6 +9,8 @@ tags: []
 
 
 
+<div id="get-packages" class="section level3">
+<h3>Get packages</h3>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.1.3</code></pre>
 <pre><code>## Warning in as.POSIXlt.POSIXct(Sys.time()): unable to identify current timezone &#39;H&#39;:
@@ -26,7 +28,78 @@ tags: []
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div id="part-1" class="section level2">
+<h2>Part 1</h2>
 <div class="figure">
 <img src="https://raw.githubusercontent.com/thayerm/mkthayer/main/graph.png" alt="" />
+<p class="caption">Orignal Graph</p>
+</div>
+<pre class="r"><code>cases &lt;- tribble(~Date, ~Mask, ~NoMask,
+                       &quot;2020-07-12&quot;,    26, 10,
+                       &quot;2020-07-13&quot;, 19.7, 9,
+                       &quot;2020-07-14&quot;, 19.7, 9.5,
+                       &quot;2020-07-15&quot;, 20, 9.8,
+                       &quot;2020-07-16&quot;, 20.5, 10,
+                       &quot;2020-07-17&quot;, 19.7, 9.8,
+                       &quot;2020-07-18&quot;, 20, 9.2,
+                       &quot;2020-07-19&quot;, 20.5, 9,
+                       &quot;2020-07-20&quot;, 20.2, 8.6,
+                       &quot;2020-07-21&quot;, 21, 8.6, 
+                       &quot;2020-07-22&quot;, 20.7, 8.7, 
+                       &quot;2020-07-23&quot;, 19.8, 8.8,
+                       &quot;2020-07-24&quot;, 20.1, 9.2, 
+                       &quot;2020-07-25&quot;, 19, 9.8,
+                       &quot;2020-07-26&quot;, 19.6, 10,
+                       &quot;2020-07-27&quot;, 18.3, 9.8,
+                       &quot;2020-07-28&quot;, 16.7, 9.4,
+                       &quot;2020-07-29&quot;, 16.5, 9.5,
+                       &quot;2020-07-30&quot;, 16.7, 9.9,
+                       &quot;2020-07-31&quot;, 16.3, 9.2,
+                       &quot;2020-08-01&quot;, 16, 8.7,
+                       &quot;2020-08-02&quot;, 15.9, 8.7,
+                       &quot;2020-08-03&quot;, 15.7, 8.8,
+                       ) %&gt;%
+                mutate(
+                      across(Date, as.Date)
+                       )
+cases</code></pre>
+<pre><code>## # A tibble: 23 x 3
+##    Date        Mask NoMask
+##    &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+##  1 2020-07-12  26     10  
+##  2 2020-07-13  19.7    9  
+##  3 2020-07-14  19.7    9.5
+##  4 2020-07-15  20      9.8
+##  5 2020-07-16  20.5   10  
+##  6 2020-07-17  19.7    9.8
+##  7 2020-07-18  20      9.2
+##  8 2020-07-19  20.5    9  
+##  9 2020-07-20  20.2    8.6
+## 10 2020-07-21  21      8.6
+## # ... with 13 more rows</code></pre>
+<pre class="r"><code>cases %&gt;%
+  ggplot(aes(x=Date))+
+  geom_line(aes(y=Mask, color = &quot;orange&quot;)) +
+  geom_line(aes(y=NoMask, color = &quot;lightblue&quot;)) +
+  theme_bw() +
+  labs(title = &quot;Kansas COVID-19 7-day Rolling Average of Cases/Per 100k Population\n&quot;, color = &quot;Legend Title\n&quot;) +
+  scale_color_manual(labels = c(&quot;No Mask&quot;, &quot;Mask&quot;), values = c(&quot;blue&quot;, &quot;orange&quot;)) +
+  ylim(0,27)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+What message is more clear in your visualization than it was in the original visualization?
+- Mask mandate counties had a higher 7-day rolling average of cases/per 100k than no-mask mandate counties in Kansas over the given time span
+What useful information do these data and your visualization tell us about mask wearing and COVID?
+- Mask wearing alone doesn’t prevent the spread of COVID</p>
+</div>
+<div id="part-2" class="section level2">
+<h2>Part 2</h2>
+<p>In the Cambridge Analytica video, the whistleblower, Christopher, discusses how he joined a company that specializes in influencing elections, working under Alexander Nix. This company later became Cambridge Analytica, using a name that would cause a false sense of prestige and association with Cambridge University. Using this, they managed to receive a $15 million investment from Robert Mercer to build personality profiles of US citizens and voters. To create these profiles, they harvested data not only from individual facebook users but also their entire network of friends without their knowledge or consent. Using that data to create the personality profiles allowed Cambridge Analytica to create personalized, targeted campaigns to sway voters to one side. Hearing Christopher’s story was very interesting particularly because it’s easy to forget about the ways data science can be used for unethical purposes, even as he was working on the assignment he didn’t realize the invasion of privacy that occurred while collecting data until much later. Even though Cambridge Analytica and Facebook denied all claims of invasion of privacy, it is clear that this is something that is very possible and something that one needs to be conscious of both while collecting data and sharing things online.</p>
+</div>
+<div id="part-3" class="section level2">
+<h2>Part 3</h2>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/thayerm/mkthayer/main/55fe8bcb56704f869e6957f4fd457ba2-0001.jpg" alt="" />
 <p class="caption">Graph</p>
+</div>
 </div>
