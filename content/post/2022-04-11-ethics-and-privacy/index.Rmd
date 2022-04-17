@@ -57,14 +57,17 @@ cases %>%
   
 ```
 What message is more clear in your visualization than it was in the original visualization?
-- Mask mandate counties had a higher 7-day rolling average of cases/per 100k than no-mask mandate counties in Kansas over the given time span
+
+- Mask mandate counties had a higher 7-day rolling average of cases/per 100k than no-mask mandate counties in Kansas over the entirety of given time span
+
 What useful information do these data and your visualization tell us about mask wearing and COVID?
+
 - Mask wearing alone doesn't prevent the spread of COVID
 
 ## Part 2
-In the Cambridge Analytica video, the whistleblower, Christopher, discusses how he joined a company that specializes in influencing elections, working under Alexander Nix. This company later became Cambridge Analytica, using a name that would cause a false sense of prestige and association with Cambridge University. Using this, they managed to receive a $15 million investment from Robert Mercer to build personality profiles of US citizens and voters. To create these profiles, they harvested data not only from individual facebook users but also their entire network of friends without their knowledge or consent. Using that data to create the personality profiles allowed Cambridge Analytica to create personalized, targeted campaigns to sway voters to one side. Hearing Christopher’s story was very interesting particularly because it’s easy to forget about the ways data science can be used for unethical purposes, even as he was working on the assignment he didn’t realize the invasion of privacy that occurred while collecting data until much later. Even though Cambridge Analytica and Facebook denied all claims of invasion of privacy, it is clear that this is something that is very possible and something that one needs to be conscious of both while collecting data and sharing things online.
+In the Cambridge Analytica video, the whistleblower, Christopher, discusses how he joined a company that specializes in influencing elections, working under Alexander Nix. This company later became Cambridge Analytica, using a name that would cause a false sense of prestige and association with Cambridge University. Using this, they managed to receive a $15 million investment from Robert Mercer to build personality profiles of US citizens and voters. To create these profiles, they harvested data not only from individual facebook users but also their entire network of friends without their knowledge or consent. Using that data to create the personality profiles allowed Cambridge Analytica to create personalized, targeted campaigns to sway voters to one side. Hearing Christopher’s story was very interesting particularly because it’s easy to forget about the ways data science can be used for unethical purposes, even as he was working on the assignment he didn’t realize the invasion of privacy that occurred while collecting data until much later. Even though Cambridge Analytica and Facebook denied all claims of invasion of privacy, it is clear that this is something that is very possible and something that one needs to be conscious so they can make an effort to ethically collect data and be careful about what they share online.
 
 
 
 ## Part 3
-![Graph](https://raw.githubusercontent.com/thayerm/mkthayer/main/55fe8bcb56704f869e6957f4fd457ba2-0001.jpg)
+![Certification](https://raw.githubusercontent.com/thayerm/mkthayer/main/55fe8bcb56704f869e6957f4fd457ba2-0001.jpg)
