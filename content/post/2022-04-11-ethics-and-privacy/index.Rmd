@@ -47,6 +47,7 @@ cases <- tribble(~Date, ~Mask, ~No_Mask,
 cases
 ```
 ```{r}
+# Graph of more accurate representation of the data
 cases %>%
   ggplot(aes(x=Date))+
   geom_line(aes(y=Mask, color = "orange")) +
